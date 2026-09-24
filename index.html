@@ -1,0 +1,1281 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Controle de EPI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF1EF; --surface:#FFFFFF; --surface-2:#F5F8F7; --ink:#152629; --muted:#5A696B; --line:#D4DBD9;
+  --brand:#0E4A57; --brand-2:#0B3C47; --brand-ink:#E6F0F0; --brand-muted:#9FC0C3;
+  --accent:#F2B705; --accent-ink:#1E1800; --accent-soft:#FFF4C9;
+  --ok:#23724A; --ok-bg:#E2F2E8; --warn:#8F5B00; --warn-bg:#FCEFCF; --bad:#B0261E; --bad-bg:#FBE3E0;
+  --radius:10px; --shadow:0 1px 2px rgba(12,34,38,.06),0 6px 20px rgba(12,34,38,.06);
+  --font:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --display:'Barlow Semi Condensed','Barlow',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1719; --surface:#152124; --surface-2:#1A292D; --ink:#E4ECEA; --muted:#98A9A7; --line:#2A3B3F;
+    --brand:#0A3640; --brand-2:#082C34; --brand-ink:#DCEBEB; --brand-muted:#7FA5A9;
+    --accent:#F5C21B; --accent-ink:#1E1800; --accent-soft:#3A3212;
+    --ok:#6FCB95; --ok-bg:#16332A; --warn:#F0B84A; --warn-bg:#3A2E12; --bad:#FF8A80; --bad-bg:#3D1C1A;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1719; --surface:#152124; --surface-2:#1A292D; --ink:#E4ECEA; --muted:#98A9A7; --line:#2A3B3F;
+  --brand:#0A3640; --brand-2:#082C34; --brand-ink:#DCEBEB; --brand-muted:#7FA5A9;
+  --accent:#F5C21B; --accent-ink:#1E1800; --accent-soft:#3A3212;
+  --ok:#6FCB95; --ok-bg:#16332A; --warn:#F0B84A; --warn-bg:#3A2E12; --bad:#FF8A80; --bad-bg:#3D1C1A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.15;margin:0}
+h1{font-size:28px;letter-spacing:.005em}
+h2{font-size:20px}
+h3{font-size:16px}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums}
+
+/* Layout */
+.app{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100%}
+.side{background:var(--brand);color:var(--brand-ink);padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:22px}
+.brandmark{display:flex;align-items:center;gap:10px;padding:0 8px}
+.brandmark .logo{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);flex:none}
+.brandmark b{font-family:var(--display);font-size:18px;white-space:nowrap;font-weight:700;display:block;line-height:1.1}
+.brandmark span{font-size:12px;color:var(--brand-muted)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--brand-ink);font-weight:500}
+.nav a svg{width:19px;height:19px;flex:none;opacity:.85}
+.nav a:hover{background:rgba(255,255,255,.07)}
+.nav a.active{background:rgba(255,255,255,.12)}
+.nav a.cta{background:var(--accent);color:var(--accent-ink);margin:6px 0 10px;font-weight:600}
+.nav a.cta:hover{filter:brightness(1.04)}
+.side-foot{margin-top:auto;font-size:12px;color:var(--brand-muted);padding:0 8px}
+.side-foot .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--brand-muted);margin-right:6px;vertical-align:1px}
+.side-foot .dot.on{background:#5BD08B}
+main{padding:28px clamp(16px,3vw,40px) 48px;min-width:0}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.page-head p{margin:4px 0 0;color:var(--muted)}
+.page-head .actions{display:flex;gap:8px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;flex-direction:row;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));z-index:20;gap:0;box-shadow:0 -4px 20px rgba(0,0,0,.15)}
+  .brandmark,.side-foot{display:none}
+  .nav{flex-direction:row;justify-content:space-around;width:100%}
+  .nav a{flex-direction:column;gap:2px;font-size:11px;padding:6px 4px;flex:1;text-align:center}
+  .nav a.cta{margin:0;order:0}
+  .nav a .lbl-long{display:none}
+  main{padding:18px 14px 110px}
+  h1{font-size:24px}
+}
+@media (min-width:861px){.nav a .lbl-short{display:none}}
+
+/* Components */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);padding:9px 15px;border-radius:8px;cursor:pointer;font-weight:500;text-decoration:none;white-space:nowrap;min-height:40px}
+.btn:hover{background:var(--surface-2)}
+.btn svg{width:18px;height:18px}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.05)}
+.btn-dark{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.btn-dark:hover{background:var(--brand-2)}
+.btn-danger{color:var(--bad)}
+.btn-lg{padding:13px 20px;font-size:16px;min-height:50px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.icon-btn{border:0;background:transparent;width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;color:var(--muted)}
+.icon-btn:hover{background:var(--surface-2);color:var(--ink)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.panel-pad{padding:18px 20px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:980px){.g2,.g3{grid-template-columns:1fr}}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--surface-2);display:grid;place-items:center;font-family:var(--display);font-weight:600;color:var(--muted);flex:none;overflow:hidden;font-size:15px}
+.avatar.lg{width:84px;height:84px;font-size:28px}
+.person{display:flex;align-items:center;gap:12px;min-width:0}
+.person b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person span{font-size:13px;color:var(--muted)}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:600px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);border-left:4px solid var(--line)}
+.kpi .v{font-family:var(--display);font-weight:600;font-size:32px;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:13px;color:var(--muted)}
+.kpi .v.money{font-size:24px;padding:4px 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi.bad{border-left-color:var(--bad)} .kpi.bad .v{color:var(--bad)}
+.kpi.warn{border-left-color:var(--warn)} .kpi.warn .v{color:var(--warn)}
+.kpi.ok{border-left-color:var(--ok)}
+
+/* Tables */
+.table-wrap{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th{text-align:left;font-weight:600;color:var(--muted);font-size:12.5px;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface-2)}
+table.t td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.t tr:last-child td{border-bottom:0}
+table.t tr.click{cursor:pointer}
+table.t tr.click:hover td{background:var(--surface-2)}
+table.t td.r,table.t th.r{text-align:right}
+
+/* Forms */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.input,select.input,textarea.input{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 12px;min-height:40px;width:100%}
+.input:focus{border-color:var(--brand);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 45%,transparent)}
+.search{position:relative;flex:1;min-width:200px}
+.search .input{padding-left:38px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted)}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.form .full{grid-column:1/-1}
+@media (max-width:620px){.form{grid-template-columns:1fr}}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+.field .hint{font-size:12.5px;color:var(--muted);margin-top:4px}
+.check{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.check input{width:19px;height:19px;margin-top:2px;accent-color:var(--brand);flex:none}
+.section-title{font-family:var(--display);font-size:15px;font-weight:600;margin:6px 0 -2px;grid-column:1/-1;padding-top:10px;border-top:1px solid var(--line)}
+
+/* Modal */
+#modal-root .backdrop{position:fixed;inset:0;background:rgba(8,20,23,.55);display:flex;align-items:flex-start;justify-content:center;padding:max(24px,env(safe-area-inset-top,0px)) 14px 24px;overflow-y:auto;z-index:50}
+.modal{background:var(--surface);border-radius:14px;width:min(640px,100%);box-shadow:0 20px 60px rgba(0,0,0,.35);margin:auto 0;overflow:hidden}
+.modal.wide{width:min(860px,100%)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.modal-body{padding:18px 20px}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--line);background:var(--surface-2);flex-wrap:wrap}
+
+/* Scanner: the one loud element */
+.cam-modal .modal-head{border-bottom:0;position:relative;padding-top:22px}
+.cam-modal .modal-head::before{content:"";position:absolute;left:0;right:0;top:0;height:7px;background:repeating-linear-gradient(-45deg,var(--accent) 0 12px,#1b1b1b 12px 24px)}
+.scanner{position:relative;aspect-ratio:4/3;background:#0A1214;border-radius:12px;overflow:hidden;margin:0 20px}
+.scanner video,.scanner canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.scanner img.still{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#0A1214}
+.scanner [hidden],.modal-foot [hidden]{display:none!important}
+.scanner .brackets{position:absolute;inset:12% 22%;pointer-events:none}
+.scanner .brackets i{position:absolute;width:34px;height:34px;border:4px solid var(--accent)}
+.scanner .brackets i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0;border-top-left-radius:10px}
+.scanner .brackets i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0;border-top-right-radius:10px}
+.scanner .brackets i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0;border-bottom-left-radius:10px}
+.scanner .brackets i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0;border-bottom-right-radius:10px}
+.scanner.matched .brackets i{border-color:#5BD08B}
+.scan-status{margin:14px 20px 0;padding:10px 14px;border-radius:8px;background:var(--surface-2);font-weight:500;min-height:44px}
+.scan-status[data-tone="ok"]{background:var(--ok-bg);color:var(--ok)}
+.scan-status[data-tone="warn"]{background:var(--warn-bg);color:var(--warn)}
+.scan-status[data-tone="bad"]{background:var(--bad-bg);color:var(--bad)}
+.samples{display:flex;gap:6px;margin:12px 20px 0}
+.samples span{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.samples span.on{background:var(--accent)}
+.sig-wrap{background:#fff;border:1px dashed #9aa;border-radius:10px;position:relative}
+.sig-wrap canvas{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair}
+.sig-wrap .base{position:absolute;left:8%;right:8%;bottom:22%;border-bottom:1px solid #bbb;pointer-events:none}
+
+/* Wizard */
+.steps{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.steps div{display:flex;align-items:center;gap:8px;padding:7px 14px 7px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-weight:500;font-size:14px}
+.steps b{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);font-family:var(--display);font-size:13px}
+.steps .on{color:var(--ink);border-color:var(--brand)}
+.steps .on b{background:var(--brand);color:var(--brand-ink)}
+.steps .done b{background:var(--ok);color:#fff}
+.face-cta{display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:26px;background:var(--brand);color:var(--brand-ink);border-radius:var(--radius);border:0;cursor:pointer;text-align:left;width:100%;min-height:220px;justify-content:flex-end;position:relative;overflow:hidden}
+.face-cta svg.big{position:absolute;right:-10px;top:-10px;width:170px;height:170px;opacity:.14}
+.face-cta b{font-family:var(--display);font-size:24px;font-weight:600}
+.face-cta span{color:var(--brand-muted);max-width:34ch}
+.face-cta .btn{pointer-events:none}
+.pick-list{max-height:430px;overflow-y:auto}
+.pick-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);cursor:pointer;width:100%;background:none;border-left:0;border-right:0;border-top:0;text-align:left}
+.pick-row:hover{background:var(--surface-2)}
+.epi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.epi-card{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:14px;display:flex;flex-direction:column;gap:8px}
+.epi-card.sel{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand) inset}
+.epi-card .top{display:flex;gap:10px;align-items:flex-start}
+.epi-card .top b{display:block;font-weight:600}
+.epi-card .meta{display:flex;gap:6px;flex-wrap:wrap}
+.epi-card .opts{display:grid;grid-template-columns:72px 1fr;gap:8px}
+.summary-bar{position:sticky;bottom:0;margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow);flex-wrap:wrap}
+@media (max-width:860px){.summary-bar{bottom:78px}}
+.termo{font-size:14px;background:var(--surface-2);border-left:4px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;margin:0}
+.proof{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.proof img{border-radius:8px;border:1px solid var(--line);max-height:120px;background:#fff}
+.success{text-align:center;padding:40px 20px}
+.success .mark{width:72px;height:72px;border-radius:50%;background:var(--ok-bg);color:var(--ok);display:grid;place-items:center;margin:0 auto 14px}
+
+/* Charts */
+.chart svg{width:100%;height:auto;display:block}
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:grid;grid-template-columns:minmax(0,1.3fr) 2fr 44px;gap:10px;align-items:center;font-size:14px}
+.bar-row .track{height:10px;background:var(--surface-2);border-radius:5px;overflow:hidden}
+.bar-row .fill{height:100%;background:var(--brand);border-radius:5px}
+:root[data-theme="dark"] .bar-row .fill{background:var(--brand-muted)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bar-row .fill{background:var(--brand-muted)}}
+.bar-row .name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tabs button{border:0;background:none;padding:10px 14px;cursor:pointer;font-weight:500;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.empty{text-align:center;padding:44px 20px;color:var(--muted)}
+.empty h3{color:var(--ink);margin-bottom:6px;font-size:18px}
+.empty .actions{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.notice{padding:12px 16px;border-radius:8px;background:var(--warn-bg);color:var(--warn);font-size:14px;margin-bottom:16px}
+.notice.info{background:var(--surface-2);color:var(--muted)}
+.loading{padding:60px 20px;text-align:center;color:var(--muted)}
+
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:80;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+#toast div{background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;box-shadow:var(--shadow);font-weight:500;max-width:90vw}
+#toast div.bad{background:var(--bad);color:#fff}
+#toast div.warn{background:var(--warn);color:#fff}
+@media (max-width:860px){#toast{bottom:calc(90px + env(safe-area-inset-bottom,0px))}}
+
+/* Document (report) preview */
+.doc-preview{background:#fff;color:#1a1a1a;border-radius:var(--radius);border:1px solid var(--line);padding:28px;overflow-x:auto}
+#print-area{display:none}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login{width:min(400px,100%);padding:28px}
+.login .brandmark span{color:var(--muted)}
+@media print{
+  body.printing .app,body.printing #modal-root,body.printing #toast{display:none!important}
+  body.printing #print-area{display:block}
+  body.printing{background:#fff}
+  :root{padding:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.doc{font-family:Barlow,Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:12.5px;line-height:1.45;max-width:1000px;margin:0 auto}
+.doc h1{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:22px;margin:2px 0;font-weight:600;color:#111}
+.doc h2{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:15px;margin:20px 0 8px;font-weight:600;color:#111}
+.doc-h{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid #0E4A57;padding-bottom:12px;margin-bottom:14px}
+.doc-k{font-size:12px;color:#0E4A57;font-weight:600}
+.doc-meta{text-align:right;font-size:12px;color:#444}
+.doc-photo{width:84px;height:84px;border-radius:6px;object-fit:cover;border:1px solid #ccc}
+.doc table{width:100%;border-collapse:collapse;margin:0 0 6px}
+.doc th,.doc td{border:1px solid #cfd6d5;padding:6px 8px;text-align:left;vertical-align:top}
+.doc thead th{background:#eef2f1;font-weight:600;font-size:11.5px}
+.doc .r{text-align:right}
+.doc-id th{background:#eef2f1;width:14%;font-weight:600}
+.doc-termo{border-left:3px solid #F2B705;background:#fbf8ec;padding:8px 12px;margin:14px 0}
+.doc-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 4px}
+.doc-sum div{border:1px solid #cfd6d5;border-radius:6px;padding:8px 10px}
+.doc-sum b{display:block;font-size:18px;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif}
+.doc-sum span{color:#555;font-size:11.5px}
+.doc .proofc img{max-width:120px;max-height:80px;display:block;margin-bottom:4px;border-radius:4px;border:1px solid #ddd}
+.doc-sign{display:flex;justify-content:flex-end;margin-top:48px}
+.doc-sign div{border-top:1px solid #333;padding-top:6px;min-width:280px;text-align:center}
+.doc-sign span{font-size:11px;color:#555}
+.doc-f{margin-top:18px;font-size:11px;color:#777;border-top:1px solid #ddd;padding-top:6px}
+.doc tr{page-break-inside:avoid}
+.doc small{color:#666}
+@page{size:A4;margin:14mm}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brandmark">
+      <div class="logo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M2 15h20v2H2z"/><path d="M12 7V4"/></svg></div>
+      <div><b>Controle de EPI</b><span id="company-name">Entregas e fichas NR-06</span></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot" id="sync-state"><span class="dot"></span>Conectando…</div>
+  </aside>
+  <main id="main"><div class="loading">Carregando…</div></main>
+</div>
+<div id="modal-root"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="print-area"></div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
+<script type="application/json" id="face-models"></script>
+<script>
+'use strict';
+const FACEAPI_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.js';
+const DOC_CSS=".doc{font-family:Barlow,Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:12.5px;line-height:1.45;max-width:1000px;margin:0 auto}\n.doc h1{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:22px;margin:2px 0;font-weight:600;color:#111}\n.doc h2{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:15px;margin:20px 0 8px;font-weight:600;color:#111}\n.doc-h{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid #0E4A57;padding-bottom:12px;margin-bottom:14px}\n.doc-k{font-size:12px;color:#0E4A57;font-weight:600}\n.doc-meta{text-align:right;font-size:12px;color:#444}\n.doc-photo{width:84px;height:84px;border-radius:6px;object-fit:cover;border:1px solid #ccc}\n.doc table{width:100%;border-collapse:collapse;margin:0 0 6px}\n.doc th,.doc td{border:1px solid #cfd6d5;padding:6px 8px;text-align:left;vertical-align:top}\n.doc thead th{background:#eef2f1;font-weight:600;font-size:11.5px}\n.doc .r{text-align:right}\n.doc-id th{background:#eef2f1;width:14%;font-weight:600}\n.doc-termo{border-left:3px solid #F2B705;background:#fbf8ec;padding:8px 12px;margin:14px 0}\n.doc-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 4px}\n.doc-sum div{border:1px solid #cfd6d5;border-radius:6px;padding:8px 10px}\n.doc-sum b{display:block;font-size:18px;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif}\n.doc-sum span{color:#555;font-size:11.5px}\n.doc .proofc img{max-width:120px;max-height:80px;display:block;margin-bottom:4px;border-radius:4px;border:1px solid #ddd}\n.doc-sign{display:flex;justify-content:flex-end;margin-top:48px}\n.doc-sign div{border-top:1px solid #333;padding-top:6px;min-width:280px;text-align:center}\n.doc-sign span{font-size:11px;color:#555}\n.doc-f{margin-top:18px;font-size:11px;color:#777;border-top:1px solid #ddd;padding-top:6px}\n.doc tr{page-break-inside:avoid}\n.doc small{color:#666}\n@page{size:A4;margin:14mm}\n";
+
+/* ---------- utils ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const pad2=n=>String(n).padStart(2,'0');
+const localISODate=(d=new Date())=>d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+const parseD=iso=>iso?(iso.length===10?new Date(iso+'T12:00:00'):new Date(iso)):null;
+const fmtDate=iso=>iso?parseD(iso).toLocaleDateString('pt-BR'):'—';
+const fmtDT=iso=>iso?new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+const money=v=>(Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const addDays=(iso,n)=>{const d=parseD(iso);d.setDate(d.getDate()+Number(n));return d.toISOString();};
+const daysUntil=iso=>Math.ceil((parseD(iso)-new Date())/86400000);
+const sum=a=>a.reduce((s,x)=>s+(Number(x)||0),0);
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const initials=n=>String(n||'?').trim().split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const byName=(a,b)=>String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR');
+const MOTIVOS=['Admissão / primeira entrega','Troca periódica','Desgaste ou dano','Perda ou extravio','Mudança de função','Outro'];
+const CATEGORIAS=['Proteção da cabeça','Proteção dos olhos e face','Proteção auditiva','Proteção respiratória','Proteção do tronco','Proteção dos membros superiores','Proteção dos membros inferiores','Proteção do corpo inteiro','Proteção contra quedas','Outro'];
+const TERMO='Declaro ter recebido gratuitamente os EPIs relacionados, em perfeito estado, e ter sido orientado sobre seu uso correto. Comprometo-me a usá-los apenas para a finalidade a que se destinam, responsabilizar-me por sua guarda e conservação, comunicar ao empregador qualquer alteração que os torne impróprios para uso e cumprir as determinações sobre seu uso adequado, conforme a NR-06.';
+
+const I={
+  panel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.6.2 4.4 1.9 5 4.9"/></svg>',
+  helmet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M2 15h20v3H2z"/><path d="M10 7.3V5h4v2.3"/></svg>',
+  report:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 17v-3M12 17v-6M15 17v-4"/></svg>',
+  gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  face:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M9 10v.5M15 10v.5M9.5 15.5c1.4 1 3.6 1 5 0"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3-1 5-4 7-4s1 3 4 3 4-3 7-3"/><path d="M14.5 4.5l5 5L11 18H6v-5z"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  check:'<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
+  close:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>',
+  print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/></svg>',
+};
+
+/* ---------- toast & modals ---------- */
+function toast(msg,tone){const t=$('#toast');const d=document.createElement('div');if(tone)d.className=tone;d.textContent=msg;t.appendChild(d);setTimeout(()=>d.remove(),tone==='bad'?6000:3200);}
+function openModal(html,{wide=false,cls='',onClose}={}){
+  const bd=document.createElement('div');bd.className='backdrop';
+  bd.innerHTML=`<div class="modal ${wide?'wide':''} ${cls}" role="dialog" aria-modal="true">${html}</div>`;
+  bd._onClose=onClose;
+  bd.addEventListener('mousedown',e=>{if(e.target===bd)closeModal(bd);});
+  $('#modal-root').appendChild(bd);
+  setTimeout(()=>{const f=bd.querySelector('input:not([type=hidden]):not([type=checkbox]),select,textarea');if(f&&!f.dataset.nofocus)f.focus();},30);
+  return bd;
+}
+function closeModal(el,{silent=false}={}){
+  const bd=el.closest?el.closest('.backdrop')||el:el;if(!bd||!bd.parentNode)return;
+  bd.remove();if(!silent&&bd._onClose)bd._onClose();
+  if(pendingRender&&!isEditing())render();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const all=$$('#modal-root .backdrop');if(all.length)closeModal(all[all.length-1]);}});
+function askConfirm(msg,{ok='Confirmar',danger=false}={}){
+  return new Promise(res=>{
+    const m=openModal(`<div class="modal-head"><h2>Confirmar</h2></div><div class="modal-body"><p style="margin:0">${msg}</p></div>
+    <div class="modal-foot"><button class="btn" data-x="no">Cancelar</button><button class="btn ${danger?'btn-dark':'btn-primary'}" data-x="yes">${esc(ok)}</button></div>`,{onClose:()=>res(false)});
+    m.querySelector('[data-x=no]').onclick=()=>{closeModal(m,{silent:true});res(false)};
+    m.querySelector('[data-x=yes]').onclick=()=>{closeModal(m,{silent:true});res(true)};
+  });
+}
+
+/* ---------- storage (shared db, with local fallback) ---------- */
+const Store={
+  mode:'local',db:null,sb:null,user:null,subs:{},maps:{},emit:{},ready:false,
+  async init(){
+    const C=window.EPI_CONFIG||{};
+    if(C.supabaseUrl&&C.supabaseAnonKey&&!/COLE_AQUI/.test(C.supabaseUrl+C.supabaseAnonKey)&&window.supabase){
+      this.sb=window.supabase.createClient(C.supabaseUrl,C.supabaseAnonKey,{auth:{persistSession:true,autoRefreshToken:true}});
+      this.mode='supabase';
+      const {data}=await this.sb.auth.getSession();this.user=data&&data.session?data.session.user:null;
+      this.ready=true;return;
+    }
+    let db=null;
+    try{if(window.claude&&typeof window.claude.use==='function')db=await window.claude.use('db');}catch(e){}
+    if(db){this.db=db;this.mode='cloud';}
+    this.ready=true;
+  },
+  async _fetchAll(col,filter){
+    const out=[];
+    for(let from=0;;from+=1000){
+      let q=this.sb.from('docs').select('id,data').eq('col',col);
+      if(filter)q=filter(q);
+      const {data,error}=await q.order('id').range(from,from+999);
+      if(error)throw error;
+      for(const r of data)out.push({id:r.id,...r.data});
+      if(data.length<1000)break;
+    }
+    return out;
+  },
+  watch(col,cb){
+    if(this.mode==='supabase'){
+      const map=this.maps[col]=new Map();const emit=this.emit[col]=()=>cb([...map.values()]);
+      let first=true;
+      const load=async()=>{try{const rows=await this._fetchAll(col);map.clear();rows.forEach(r=>map.set(r.id,r));emit();}
+        catch(e){console.error(col,e);toast('Não foi possível carregar '+col+': '+(e.message||e),'bad');emit();}};
+      load();
+      const ch=this.sb.channel('docs-'+col)
+        .on('postgres_changes',{event:'*',schema:'public',table:'docs',filter:'col=eq.'+col},p=>{
+          if(p.eventType==='DELETE'){if(p.old&&p.old.id)map.delete(p.old.id);}
+          else if(p.new&&p.new.id)map.set(p.new.id,{id:p.new.id,...p.new.data});
+          emit();})
+        .subscribe(st=>{if(st==='SUBSCRIBED'){if(!first)load();first=false;}});
+      document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')load();});
+      return()=>this.sb.removeChannel(ch);
+    }
+    if(this.mode==='cloud'){
+      return this.db.collection(col).onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),err=>{
+        console.error(col,err);toast('A sincronização de '+col+' parou ('+(err&&err.code)+'). Recarregue a página.','bad');});
+    }
+    (this.subs[col]=this.subs[col]||[]).push(cb);cb(this._all(col));return()=>{};
+  },
+  _local(col,id,data){const m=this.maps[col];if(m){m.set(id,{id,...data});this.emit[col]();}},
+  _read(col){try{return JSON.parse(localStorage.getItem('epi:'+col)||'{}')}catch(e){return{}}},
+  _all(col){return Object.entries(this._read(col)).map(([id,v])=>({id,...v}))},
+  _write(col,obj){try{localStorage.setItem('epi:'+col,JSON.stringify(obj))}catch(e){toast('O armazenamento deste navegador está cheio.','bad');throw e}
+    (this.subs[col]||[]).forEach(cb=>cb(this._all(col)));},
+  clean(o){const{id,...rest}=o;return JSON.parse(JSON.stringify(rest));},
+  async set(col,id,data){
+    data=this.clean(data);
+    if(this.mode==='supabase'){
+      const {error}=await this.sb.from('docs').upsert({col,id,data,updated_at:new Date().toISOString()});
+      if(error)throw error;this._local(col,id,data);return;
+    }
+    if(this.mode==='cloud')return retry(()=>this.db.doc(col+'/'+id).set(data));
+    const all=this._read(col);all[id]=data;this._write(col,all);
+  },
+  async update(col,id,patch){
+    patch=this.clean(patch);
+    if(this.mode==='supabase'){
+      const {data:cur,error:e1}=await this.sb.from('docs').select('data').eq('col',col).eq('id',id).maybeSingle();
+      if(e1)throw e1;
+      const data={...((cur&&cur.data)||{}),...patch};
+      const {error}=await this.sb.from('docs').upsert({col,id,data,updated_at:new Date().toISOString()});
+      if(error)throw error;this._local(col,id,data);return;
+    }
+    if(this.mode==='cloud')return retry(()=>this.db.doc(col+'/'+id).update(patch));
+    const all=this._read(col);all[id]={...(all[id]||{}),...patch};this._write(col,all);
+  },
+  async bulk(col,rows){
+    if(this.mode==='supabase'){
+      for(let i=0;i<rows.length;i+=100){
+        const chunk=rows.slice(i,i+100).map(r=>({col,id:r.id,data:this.clean(r),updated_at:new Date().toISOString()}));
+        const {error}=await this.sb.from('docs').upsert(chunk);if(error)throw error;
+      }
+      if(this.maps[col]){rows.forEach(r=>this.maps[col].set(r.id,{...r}));this.emit[col]();}
+      return;
+    }
+    for(const r of rows)await this.set(col,r.id,r);
+  },
+  async where(col,field,val){
+    if(this.mode==='supabase')return this._fetchAll(col,q=>q.eq('data->>'+field,val));
+    if(this.mode==='cloud'){const s=await retry(()=>this.db.collection(col).where(field,'==',val).get());return s.docs.map(d=>({id:d.id,...d.data()}));}
+    return this._all(col).filter(r=>r[field]===val);
+  },
+  async all(col){
+    if(this.mode==='supabase')return this._fetchAll(col);
+    if(this.mode==='cloud'){const s=await retry(()=>this.db.collection(col).get());return s.docs.map(d=>({id:d.id,...d.data()}));}
+    return this._all(col);
+  }
+};
+async function retry(fn){try{return await fn()}catch(e){if(e&&e.code==='unavailable'){await new Promise(r=>setTimeout(r,500+Math.random()*700));return fn();}throw e}}
+function errMsg(e){
+  const c=e&&e.code;
+  if(c==='quota_exceeded')return 'O limite de registros deste sistema foi atingido. Exporte um backup e remova registros antigos.';
+  if(c==='invalid_argument')return 'Você não tem permissão para alterar dados aqui, ou o registro ficou grande demais.';
+  if(c==='resource_exhausted')return 'Muitas operações seguidas. Aguarde alguns segundos e tente de novo.';
+  if(e&&e.message&&Store.mode==='supabase')return /row-level security|JWT|permission/i.test(e.message)?'Sua sessão expirou ou você não tem permissão. Saia e entre de novo.':'Não foi possível salvar: '+e.message;
+  return 'Não foi possível salvar'+(c?' ('+c+')':'')+'. Tente novamente.';
+}
+async function saveFile(filename,data){
+  let dl=null;try{if(window.claude&&window.claude.use)dl=await window.claude.use('downloads');}catch(e){}
+  if(dl){try{await dl.save({filename,data});}catch(e){if(e&&e.code==='declined')return;toast('Não foi possível gerar o arquivo ('+(e&&e.code)+').','bad');}return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=filename;document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ---------- state ---------- */
+const S={colabs:[],epis:[],entregas:[],config:{},loaded:{colaboradores:false,epis:false,entregas:false,config:false},uid:null,userCap:null,names:{},evCache:{}};
+const DEFAULT_CFG={empresa:'',cnpj:'',unidade:'',responsavel:'',limiar:0.5};
+const cfg=()=>({...DEFAULT_CFG,...S.config});
+const colabById=id=>S.colabs.find(c=>c.id===id);
+const epiById=id=>S.epis.find(p=>p.id===id);
+const enrolled=()=>S.colabs.filter(c=>c.ativo!==false&&Array.isArray(c.faceDescriptors)&&c.faceDescriptors.length);
+function caStatus(p){
+  if(!p.validadeCA)return null;const d=daysUntil(p.validadeCA);
+  if(d<0)return{level:'bad',text:'CA vencido'};if(d<=30)return{level:'warn',text:'CA vence em '+d+'d'};return{level:'ok',text:'CA válido'};
+}
+function lastByColabEpi(){
+  const last={};
+  for(const e of S.entregas)for(const it of (e.itens||[])){const k=e.colaboradorId+'|'+it.epiId;if(!last[k]||last[k]<e.data)last[k]=e.data;}
+  return last;
+}
+function trocas(){
+  const out=[];
+  for(const [k,d] of Object.entries(lastByColabEpi())){
+    const [cid,eid]=k.split('|');const c=colabById(cid),p=epiById(eid);
+    if(!c||!p||c.ativo===false||p.ativo===false||!Number(p.periodicidadeDias))continue;
+    const vence=addDays(d,p.periodicidadeDias);const dias=daysUntil(vence);
+    if(dias<=7)out.push({c,p,ultima:d,vence,dias});
+  }
+  return out.sort((a,b)=>a.dias-b.dias);
+}
+function dueFor(colabId){
+  const res={};const last=lastByColabEpi();
+  for(const p of S.epis){const d=last[colabId+'|'+p.id];if(!d)continue;
+    const r={ultima:d};if(Number(p.periodicidadeDias)){r.vence=addDays(d,p.periodicidadeDias);r.dias=daysUntil(r.vence);}res[p.id]=r;}
+  return res;
+}
+function avatar(c,lg){return c&&c.foto?`<img class="avatar ${lg?'lg':''}" src="${esc(c.foto)}" alt="">`:`<div class="avatar ${lg?'lg':''}">${esc(initials(c&&c.nome))}</div>`;}
+async function resolveNames(ids){
+  if(!S.userCap)return;const need=[...new Set(ids)].filter(i=>i&&!(i in S.names));if(!need.length)return;
+  try{const ps=await S.userCap.profiles(need);for(const i of need)S.names[i]=(ps&&ps[i]&&ps[i].name)||'';}catch(e){}
+}
+
+/* ---------- face recognition ---------- */
+const Face={
+  ready:false,loading:null,
+  loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('script'));document.head.appendChild(s);});},
+  b64(b64){const bin=atob(b64);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer;},
+  load(){
+    if(this.ready)return Promise.resolve();
+    if(this.loading)return this.loading;
+    this.loading=(async()=>{
+      if(!window.faceapi)await this.loadScript(FACEAPI_URL);
+      const tf=faceapi.tf;
+      let ok=false;try{ok=await tf.setBackend('webgl');}catch(e){ok=false;}if(!ok){await tf.setBackend('cpu');}await tf.ready();
+      const raw=($('#face-models')&&$('#face-models').textContent||'').trim();let models;
+      if(raw&&raw[0]==='{')models=JSON.parse(raw);else{const base=FACEAPI_URL.replace('dist/face-api.js','model/');await faceapi.nets.tinyFaceDetector.loadFromUri(base);await faceapi.nets.faceLandmark68TinyNet.loadFromUri(base);await faceapi.nets.faceRecognitionNet.loadFromUri(base);this.ready=true;return;}
+      const nets=[['tiny_face_detector_model',faceapi.nets.tinyFaceDetector],['face_landmark_68_tiny_model',faceapi.nets.faceLandmark68TinyNet],['face_recognition_model',faceapi.nets.faceRecognitionNet]];
+      for(const [key,net] of nets){
+        const m=models[key];let map=tf.io.decodeWeights(this.b64(m.bin),m.manifest.flatMap(g=>g.weights));
+        if(map&&typeof map.then==='function')map=await map;
+        net.loadFromWeightMap(map);
+      }
+      this.ready=true;
+    })().catch(e=>{this.loading=null;throw e;});
+    return this.loading;
+  },
+  async detect(input){
+    return faceapi.detectSingleFace(input,new faceapi.TinyFaceDetectorOptions({inputSize:416,scoreThreshold:0.4})).withFaceLandmarks(true).withFaceDescriptor();
+  },
+  minDist(desc,list){let m=Infinity;for(const d of (list||[])){let s=0;for(let i=0;i<128;i++){const x=desc[i]-d[i];s+=x*x;}const r=Math.sqrt(s);if(r<m)m=r;}return m;},
+  best(desc,colabs){let b=null;for(const c of colabs){const d=this.minDist(desc,c.faceDescriptors);if(!b||d<b.d)b={c,d};}return b;},
+  pack(desc){return Array.from(desc).map(v=>Math.round(v*1e4)/1e4);}
+};
+const srcW=s=>s.videoWidth||s.naturalWidth||s.width;
+const srcH=s=>s.videoHeight||s.naturalHeight||s.height;
+function cropFace(src,b){
+  const p=.45,vw=srcW(src),vh=srcH(src);
+  const x=Math.max(0,b.x-b.width*p),y=Math.max(0,b.y-b.height*p*1.2);
+  const w=Math.min(vw-x,b.width*(1+2*p)),h=Math.min(vh-y,b.height*(1+2*p*1.2));const side=Math.min(w,h);
+  const c=document.createElement('canvas');c.width=c.height=160;
+  c.getContext('2d').drawImage(src,x+(w-side)/2,y+(h-side)/2,side,side,0,0,160,160);
+  return c.toDataURL('image/jpeg',.8);
+}
+function grabFrame(src,width=320){
+  const c=document.createElement('canvas');c.width=width;c.height=Math.round(srcH(src)*width/srcW(src));
+  c.getContext('2d').drawImage(src,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.7);
+}
+const TOUCH=window.matchMedia&&matchMedia('(pointer:coarse)').matches;
+const PICK_LBL=TOUCH?'Tirar foto':'Escolher foto do rosto';
+function liveCameraAllowed(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return false;
+  try{const pp=document.permissionsPolicy||document.featurePolicy;if(pp&&typeof pp.allowsFeature==='function')return pp.allowsFeature('camera');}catch(e){}
+  return true;
+}
+function camError(e){
+  const n=e&&e.name;
+  if(n==='NotAllowedError'||n==='SecurityError')return 'A câmera ao vivo não foi liberada nesta página.';
+  if(n==='NotFoundError'||n==='OverconstrainedError')return 'Nenhuma câmera foi encontrada neste dispositivo.';
+  if(n==='NotReadableError')return 'A câmera está em uso por outro aplicativo.';
+  return 'Não foi possível abrir a câmera ao vivo.';
+}
+
+/* mode: enroll | identify | verify. Live camera when allowed; photo capture otherwise. */
+function cameraModal({mode,colab,title}){
+  return new Promise(resolve=>{
+    let stream=null,running=true,resolved=false,lastDet=null,streak=0,streakId=null,miss=0,photo=false;const samples=[];let foto=null;
+    const lim=Number(cfg().limiar)||0.5;
+    const sub={enroll:'Capture 3 amostras do rosto, mudando levemente a posição entre elas.',identify:'Posicione o rosto do colaborador de frente, com boa luz.',verify:`Peça para ${esc(colab&&colab.nome)} olhar para a câmera para confirmar o recebimento.`}[mode];
+    const m=openModal(`
+      <div class="modal-head"><div><h2>${esc(title)}</h2><div class="small muted" style="margin-top:4px">${sub}</div></div><button class="icon-btn" data-close aria-label="Fechar">${I.close}</button></div>
+      <div class="scanner"><video playsinline muted autoplay></video><canvas></canvas><img class="still" alt="" hidden><div class="brackets"><i></i><i></i><i></i><i></i></div></div>
+      ${mode==='enroll'?'<div class="samples"><span></span><span></span><span></span></div>':''}
+      <div class="scan-status" aria-live="polite">Abrindo a câmera…</div>
+      <input type="file" accept="image/*" capture="user" hidden data-file>
+      <div class="modal-foot" style="margin-top:16px"></div>`,{cls:'cam-modal',onClose:()=>{running=false;stop();if(!resolved){resolved=true;resolve(null);}}});
+    const video=$('video',m),canvas=$('canvas',m),still=$('img.still',m),box=$('.scanner',m),statusEl=$('.scan-status',m),foot=$('.modal-foot',m),fileIn=$('[data-file]',m);
+    m.querySelector('[data-close]').onclick=()=>closeModal(m);
+    function stop(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+    function finish(v){if(resolved)return;resolved=true;running=false;stop();closeModal(m,{silent:true});resolve(v);}
+    function status(t,tone){statusEl.textContent=t;statusEl.dataset.tone=tone||'';}
+    function paintSamples(){$$('.samples span',m).forEach((s,i)=>s.classList.toggle('on',i<samples.length));}
+    function draw(det,color){
+      const cw=box.clientWidth,ch=box.clientHeight,dpr=window.devicePixelRatio||1;
+      if(canvas.width!==Math.round(cw*dpr)){canvas.width=Math.round(cw*dpr);canvas.height=Math.round(ch*dpr);}
+      const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cw,ch);
+      if(!det||!video.videoWidth)return;
+      const vw=video.videoWidth,vh=video.videoHeight,s=Math.max(cw/vw,ch/vh),ox=(cw-vw*s)/2,oy=(ch-vh*s)/2;const b=det.detection.box;
+      ctx.strokeStyle=color||'#F2B705';ctx.lineWidth=3;ctx.strokeRect(ox+b.x*s,oy+b.y*s,b.width*s,b.height*s);
+    }
+    async function finishEnroll(){
+      const others=enrolled().filter(c=>!colab||c.id!==colab.id);const dup=others.length?Face.best(samples[0],others):null;
+      if(dup&&dup.d<lim){
+        const ok=await askConfirm(`Este rosto é muito parecido com o de <b>${esc(dup.c.nome)}</b>, que já tem biometria cadastrada. Deseja salvar mesmo assim?`,{ok:'Salvar mesmo assim'});
+        if(!ok){samples.length=0;foto=null;paintSamples();return false;}
+      }
+      finish({descriptors:samples.slice(),foto});return true;
+    }
+
+    /* ---- live camera ---- */
+    function liveFooter(){
+      const photoBtn=`<button class="btn" data-pick>Usar foto</button>`;
+      if(mode==='enroll')foot.innerHTML=`<button class="btn" data-cl>Cancelar</button>${photoBtn}<button class="btn btn-primary" data-cap disabled>${I.face} Capturar amostra (0/3)</button>`;
+      else if(mode==='verify')foot.innerHTML=`<button class="btn" data-fb>${I.pen} Usar assinatura na tela</button>${photoBtn}`;
+      else foot.innerHTML=`<button class="btn" data-cl>Buscar pelo nome</button>${photoBtn}`;
+      wireFoot();
+    }
+    function wireFoot(){
+      const q=s=>foot.querySelector(s);
+      if(q('[data-cl]'))q('[data-cl]').onclick=()=>closeModal(m);
+      if(q('[data-fb]'))q('[data-fb]').onclick=()=>finish({fallback:true});
+      if(q('[data-pick]'))q('[data-pick]').onclick=()=>{if(!photo)photoMode('Tire ou escolha uma foto do rosto, de frente e com boa luz.','');fileIn.value='';fileIn.click();};
+      if(q('[data-cap]'))q('[data-cap]').onclick=capture;
+      if(q('[data-done]'))q('[data-done]').onclick=()=>{if(samples.length)finishEnroll();};
+    }
+    async function capture(){
+      if(!lastDet){status('Nenhum rosto na moldura. Aproxime o rosto e tente de novo.','warn');return;}
+      samples.push(Face.pack(lastDet.descriptor));if(!foto)foto=cropFace(video,lastDet.detection.box);paintSamples();
+      const btn=foot.querySelector('[data-cap]');btn.innerHTML=`${I.face} Capturar amostra (${samples.length}/3)`;
+      if(samples.length>=3){running=false;if(!await finishEnroll()){btn.innerHTML=`${I.face} Capturar amostra (0/3)`;running=true;loop();}}
+      else status('Amostra '+samples.length+' registrada. Mude levemente a posição e capture a próxima.','ok');
+    }
+    async function loop(){
+      if(!running)return;
+      try{
+        if(video.readyState>=2&&Face.ready){
+          const det=await Face.detect(video);if(!running)return;lastDet=det||null;
+          if(mode==='enroll'){
+            const btn=foot.querySelector('[data-cap]');if(btn)btn.disabled=!det;
+            draw(det);if(samples.length===0||!det)status(det?'Rosto detectado. Toque em Capturar amostra.':'Posicione o rosto dentro da moldura.',det?'ok':'');
+          }else if(mode==='identify'){
+            const list=enrolled();
+            if(!list.length){status('Nenhum colaborador tem biometria cadastrada ainda. Cadastre o rosto em Colaboradores.','warn');draw(det);}
+            else if(det){
+              const b=Face.best(det.descriptor,list);
+              if(b&&b.d<lim){if(streakId===b.c.id)streak++;else{streakId=b.c.id;streak=1;}miss=0;draw(det,'#5BD08B');status('Reconhecendo '+b.c.nome+'…','ok');
+                if(streak>=3){box.classList.add('matched');setTimeout(()=>finish({colab:b.c,d:b.d}),250);return;}}
+              else{streak=0;miss++;draw(det);status(miss>4?'Rosto não reconhecido. Confira a iluminação ou busque pelo nome.':'Rosto detectado. Comparando com os cadastros…',miss>4?'warn':'');}
+            }else{draw(null);status('Posicione o rosto dentro da moldura.');}
+          }else{
+            if(det){
+              const d=Face.minDist(det.descriptor,colab.faceDescriptors);
+              if(d<lim){streak++;miss=0;draw(det,'#5BD08B');status('Confirmando identidade…','ok');
+                if(streak>=3){box.classList.add('matched');const f=grabFrame(video);setTimeout(()=>finish({distancia:Math.round(d*1000)/1000,foto:f}),250);return;}}
+              else{streak=0;miss++;draw(det,'#FF6B5E');if(miss<=4)status('Rosto detectado. Comparando…');else status('O rosto não confere com '+colab.nome+'. Se for a pessoa certa, melhore a iluminação ou use a assinatura na tela.','bad');}
+            }else{draw(null);status('Posicione o rosto dentro da moldura.');}
+          }
+        }
+      }catch(e){console.error(e);}
+      if(running)setTimeout(loop,90);
+    }
+
+    /* ---- photo capture (works where live camera is blocked) ---- */
+    function photoMode(msg,tone='warn'){
+      photo=true;running=false;stop();video.hidden=true;canvas.hidden=true;
+      status(msg,tone);
+      const pick=`<button class="btn btn-primary" data-pick>${I.face} ${PICK_LBL}${mode==='enroll'?' (0/3)':''}</button>`;
+      if(mode==='enroll')foot.innerHTML=`<button class="btn" data-cl>Cancelar</button><button class="btn" data-done hidden>Concluir</button>${pick}`;
+      else if(mode==='verify')foot.innerHTML=`<button class="btn" data-fb>${I.pen} Usar assinatura na tela</button>${pick}`;
+      else foot.innerHTML=`<button class="btn" data-cl>Buscar pelo nome</button>${pick}`;
+      wireFoot();
+      Face.load().catch(()=>{});
+    }
+    fileIn.addEventListener('change',async()=>{
+      const file=fileIn.files&&fileIn.files[0];if(!file)return;
+      const pickBtn=foot.querySelector('[data-pick]');if(pickBtn)pickBtn.disabled=true;
+      status('Analisando a foto…');box.classList.remove('matched');
+      try{
+        const url=URL.createObjectURL(file);still.src=url;still.hidden=false;
+        try{await still.decode();}catch(e){status('Não foi possível abrir esta imagem. Use uma foto JPG ou PNG.','bad');return;}
+        if(!Face.ready){status('Preparando o reconhecimento facial. Na primeira vez leva alguns segundos…');}
+        try{await Face.load();}catch(e){status('Não foi possível carregar o reconhecimento facial neste navegador.','bad');return;}
+        const det=await Face.detect(still);
+        if(!det){status('Nenhum rosto encontrado na foto. Tire outra, de frente, com o rosto grande e boa luz.','warn');return;}
+        if(mode==='enroll'){
+          samples.push(Face.pack(det.descriptor));if(!foto)foto=cropFace(still,det.detection.box);paintSamples();
+          if(pickBtn)pickBtn.innerHTML=`${I.face} ${PICK_LBL} (${samples.length}/3)`;
+          const done=foot.querySelector('[data-done]');if(done)done.hidden=false;
+          if(samples.length>=3){await finishEnroll();}
+          else status(`Foto ${samples.length} de 3 registrada. Envie outra com um ângulo um pouco diferente, ou toque em Concluir.`,'ok');
+        }else if(mode==='identify'){
+          const list=enrolled();
+          if(!list.length){status('Nenhum colaborador tem biometria cadastrada ainda.','warn');return;}
+          const b=Face.best(det.descriptor,list);
+          if(b&&b.d<lim){box.classList.add('matched');status('Identificado: '+b.c.nome,'ok');setTimeout(()=>finish({colab:b.c,d:b.d}),500);}
+          else status('Rosto não reconhecido. Tire outra foto ou busque pelo nome.','warn');
+        }else{
+          const d=Face.minDist(det.descriptor,colab.faceDescriptors);
+          if(d<lim){box.classList.add('matched');status('Identidade confirmada.','ok');const f=grabFrame(still);setTimeout(()=>finish({distancia:Math.round(d*1000)/1000,foto:f}),500);}
+          else status('O rosto da foto não confere com '+colab.nome+'. Tire outra foto ou use a assinatura na tela.','bad');
+        }
+      }catch(e){console.error(e);status('Não foi possível analisar a foto.','bad');}
+      finally{if(pickBtn)pickBtn.disabled=false;fileIn.value='';}
+    });
+
+    (async()=>{
+      if(!liveCameraAllowed()){photoMode(TOUCH?'A câmera ao vivo não é liberada dentro do visualizador do Claude. Toque em Tirar foto para abrir a câmera frontal.':'A câmera ao vivo não é liberada dentro do visualizador do Claude, e no computador o navegador só permite escolher um arquivo. Escolha uma foto do rosto (tirada no Photo Booth ou no celular), ou use um celular/tablet, onde o botão abre a câmera.');return;}
+      liveFooter();
+      try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});}
+      catch(e){photoMode(camError(e)+' Tire ou escolha uma foto do rosto: no celular e no tablet, o botão abre a câmera frontal.');return;}
+      if(!running||photo){stop();return;}
+      video.srcObject=stream;try{await video.play();}catch(e){}
+      if(!Face.ready)status('Preparando o reconhecimento facial. Na primeira vez leva alguns segundos…');
+      try{await Face.load();}catch(e){console.error(e);status('Não foi possível carregar o reconhecimento facial neste navegador.','bad');return;}
+      if(photo)return;
+      status('Posicione o rosto dentro da moldura.');loop();
+    })();
+  });
+}
+function signatureModal(colab){
+  return new Promise(resolve=>{
+    let done=false;
+    const m=openModal(`<div class="modal-head"><div><h2>Assinatura do colaborador</h2><div class="small muted" style="margin-top:4px">${esc(colab.nome)} assina com o dedo ou o mouse na área abaixo.</div></div><button class="icon-btn" data-close aria-label="Fechar">${I.close}</button></div>
+      <div class="modal-body"><div class="sig-wrap"><div class="base"></div><canvas width="900" height="300"></canvas></div></div>
+      <div class="modal-foot"><button class="btn" data-clear>Limpar</button><button class="btn btn-primary" data-ok>Confirmar assinatura</button></div>`,{wide:true,onClose:()=>{if(!done){done=true;resolve(null);}}});
+    m.querySelector('[data-close]').onclick=()=>closeModal(m);
+    const cv=$('canvas',m),ctx=cv.getContext('2d');let drawing=false,drawn=false,last=null;
+    const reset=()=>{ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);drawn=false;};reset();
+    ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=4;ctx.strokeStyle='#14252a';
+    const pt=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height};};
+    cv.addEventListener('pointerdown',e=>{drawing=true;last=pt(e);cv.setPointerCapture(e.pointerId);});
+    cv.addEventListener('pointermove',e=>{if(!drawing)return;const p=pt(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p;drawn=true;});
+    const up=()=>{drawing=false;};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+    m.querySelector('[data-clear]').onclick=reset;
+    m.querySelector('[data-ok]').onclick=()=>{
+      if(!drawn){toast('A área de assinatura está vazia.','warn');return;}
+      const s=document.createElement('canvas');s.width=450;s.height=150;s.getContext('2d').drawImage(cv,0,0,450,150);
+      done=true;closeModal(m,{silent:true});resolve({assinatura:s.toDataURL('image/jpeg',.75)});
+    };
+  });
+}
+
+/* ---------- render core ---------- */
+let pendingRender=false;
+function isEditing(){
+  const a=document.activeElement;
+  return a&&$('#main').contains(a)&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)&&a.type!=='checkbox';
+}
+document.addEventListener('focusout',()=>setTimeout(()=>{if(pendingRender&&!isEditing())render();},50));
+const route=()=>{const [name,arg]=(location.hash.slice(1)||'painel').split('/');return{name,arg:arg?decodeURIComponent(arg):null};};
+const NAV=[['painel','Painel','Painel',I.panel],['entrega','Nova entrega','Entregar',I.plus,'cta'],['colaboradores','Colaboradores','Pessoas',I.people],['epis','EPIs','EPIs',I.helmet],['relatorios','Relatórios','Relatórios',I.report],['config','Configurações','Ajustes',I.gear]];
+function renderNav(){
+  const r=route().name;const cur=r==='colaborador'?'colaboradores':r;
+  $('#nav').innerHTML=NAV.map(([k,l,s,ic,cls])=>`<a href="#${k}" class="${cls||''} ${cur===k?'active':''}">${ic}<span class="lbl-long">${l}</span><span class="lbl-short">${s}</span></a>`).join('');
+  const c=cfg();$('#company-name').textContent=c.empresa||'Entregas e fichas NR-06';
+  const st=$('#sync-state');if(!Store.ready)return;
+  st.innerHTML=Store.mode==='supabase'?`<span class="dot on"></span>${esc(Store.user?Store.user.email:'')}<br><a href="#" data-action="logout" style="color:var(--brand-ink)">Sair</a>`:Store.mode==='cloud'?'<span class="dot on"></span>Dados sincronizados':'<span class="dot"></span>Modo local (só este navegador)';
+}
+function render(force){
+  if(!force&&(isEditing())){pendingRender=true;return;}
+  pendingRender=false;renderNav();
+  const main=$('#main');
+  if(!Object.values(S.loaded).every(Boolean)){main.innerHTML='<div class="loading">Carregando dados…</div>';return;}
+  const r=route();
+  const V={painel:vPainel,colaboradores:vColabs,colaborador:vColab,epis:vEpis,entrega:vEntrega,relatorios:vRelatorios,config:vConfig}[r.name]||vPainel;
+  main.innerHTML=V(r.arg);
+  (AFTER[r.name]||(()=>{}))(r.arg);
+}
+const AFTER={};
+window.addEventListener('hashchange',()=>{if(route().name==='entrega'&&W.done)W=newWizard();render(true);window.scrollTo(0,0);});
+function head(title,sub,actions=''){return`<div class="page-head"><div><h1>${title}</h1>${sub?`<p>${sub}</p>`:''}</div><div class="actions">${actions}</div></div>`;}
+
+/* ---------- Painel ---------- */
+function vPainel(){
+  if(!S.colabs.length&&!S.epis.length){
+    return head('Painel','Visão geral das entregas de EPI.')+`<div class="panel"><div class="empty"><h3>Comece pelos cadastros</h3><p>Cadastre os EPIs que a empresa fornece e os colaboradores que vão recebê-los. Depois é só registrar as entregas.</p>
+    <div class="actions"><button class="btn btn-primary" data-action="new-epi">${I.helmet} Cadastrar EPI</button><button class="btn" data-action="new-colab">${I.people} Cadastrar colaborador</button><button class="btn" data-action="import-colabs">Importar planilha</button></div></div></div>`;
+  }
+  const now=new Date();const mesIni=new Date(now.getFullYear(),now.getMonth(),1).toISOString();
+  const entMes=S.entregas.filter(e=>e.data>=mesIni);
+  const itensMes=sum(entMes.flatMap(e=>(e.itens||[]).map(i=>i.qtd)));
+  const custoMes=sum(entMes.flatMap(e=>(e.itens||[]).map(i=>i.qtd*(i.custoUnit||0))));
+  const tv=trocas();const venc=tv.filter(t=>t.dias<0);
+  const low=S.epis.filter(p=>p.ativo!==false&&Number(p.estoque||0)<=Number(p.estoqueMinimo||0));
+  const caBad=S.epis.filter(p=>p.ativo!==false&&caStatus(p)&&caStatus(p).level!=='ok');
+  const ativos=S.colabs.filter(c=>c.ativo!==false);const semBio=ativos.filter(c=>!(c.faceDescriptors||[]).length).length;
+  // 6 months chart
+  const months=[];for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({y:d.getFullYear(),m:d.getMonth(),label:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''),v:0});}
+  const six=new Date(now.getFullYear(),now.getMonth()-5,1).toISOString();const top={};
+  for(const e of S.entregas){if(e.data<six)continue;const d=new Date(e.data);const b=months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth());
+    for(const it of (e.itens||[])){if(b)b.v+=Number(it.qtd)||0;top[it.nome]=(top[it.nome]||0)+(Number(it.qtd)||0);}}
+  const max=Math.max(1,...months.map(x=>x.v));const W=560,H=190,bw=W/6;
+  const chart=`<svg viewBox="0 0 ${W} ${H+28}" role="img" aria-label="Itens entregues por mês">${months.map((x,i)=>{const h=Math.round((x.v/max)*(H-24));const X=i*bw+bw*.2;
+    return`<rect x="${X}" y="${H-h}" width="${bw*.6}" height="${Math.max(h,1)}" rx="4" fill="${i===5?'var(--accent)':'var(--brand)'}" opacity="${i===5?1:.85}"/><text x="${X+bw*.3}" y="${H-h-7}" text-anchor="middle" font-size="14" fill="var(--ink)" font-family="Barlow Semi Condensed,Barlow,sans-serif" font-weight="600">${x.v}</text><text x="${X+bw*.3}" y="${H+20}" text-anchor="middle" font-size="13" fill="var(--muted)">${esc(x.label)}</text>`;}).join('')}</svg>`;
+  const topArr=Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,10);const tmax=Math.max(1,...topArr.map(t=>t[1]));
+  return head('Painel',`${ativos.length} colaborador${ativos.length===1?'':'es'} ativo${ativos.length===1?'':'s'} · ${S.epis.filter(p=>p.ativo!==false).length} EPI${S.epis.filter(p=>p.ativo!==false).length===1?'':'s'} cadastrado${S.epis.filter(p=>p.ativo!==false).length===1?'':'s'}`,`<a class="btn btn-primary" href="#entrega">${I.plus} Nova entrega</a>`)+`
+  <div class="kpis">
+    <div class="kpi ok"><div class="v">${entMes.length}</div><div class="l">Entregas neste mês · ${itensMes} itens</div></div>
+    <div class="kpi"><div class="v money">${money(custoMes)}</div><div class="l">Custo de EPIs no mês</div></div>
+    <div class="kpi ${venc.length?'bad':''}"><div class="v">${venc.length}</div><div class="l">Trocas vencidas</div></div>
+    <div class="kpi ${low.length?'warn':''}"><div class="v">${low.length}</div><div class="l">EPIs com estoque baixo</div></div>
+    <div class="kpi ${caBad.some(p=>caStatus(p).level==='bad')?'bad':caBad.length?'warn':''}"><div class="v">${caBad.length}</div><div class="l">CA vencido ou a vencer</div></div>
+  </div>
+  ${semBio?`<div class="notice info">${semBio} colaborador${semBio>1?'es ainda não têm':' ainda não tem'} biometria facial cadastrada. Sem ela, a entrega é confirmada por assinatura na tela.</div>`:''}
+  <div class="grid g2">
+    <div class="panel"><div class="panel-head"><h2>Itens entregues nos últimos 6 meses</h2></div><div class="panel-pad chart">${chart}</div></div>
+    <div class="panel"><div class="panel-head"><h2>EPIs mais entregues</h2><span class="small muted">6 meses</span></div><div class="panel-pad">${topArr.length?`<div class="bars">${topArr.map(([n,v])=>`<div class="bar-row"><span class="name" title="${esc(n)}">${esc(n)}</span><div class="track"><div class="fill" style="width:${v/tmax*100}%"></div></div><span class="num r" style="text-align:right">${v}</span></div>`).join('')}</div>`:'<p class="muted" style="margin:0">Nenhuma entrega registrada ainda.</p>'}</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel"><div class="panel-head"><h2>Trocas vencidas e próximas</h2><span class="small muted">até 7 dias</span></div>
+      ${tv.length?`<div class="table-wrap"><table class="t"><thead><tr><th>Colaborador</th><th>EPI</th><th>Troca</th><th></th></tr></thead><tbody>${tv.slice(0,12).map(t=>`<tr><td><div class="person">${avatar(t.c)}<div><b>${esc(t.c.nome)}</b><span>${esc(t.c.setor||'')}</span></div></div></td><td>${esc(t.p.nome)}</td><td><span class="chip ${t.dias<0?'bad':'warn'}">${t.dias<0?'Venceu há '+(-t.dias)+'d':t.dias===0?'Vence hoje':'Em '+t.dias+'d'}</span></td><td class="r"><button class="btn" data-action="deliver-to" data-id="${t.c.id}" data-epi="${t.p.id}">Entregar</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Nenhuma troca vencida. Os prazos aparecem aqui quando o EPI tem periodicidade de troca cadastrada.</div>'}
+    </div>
+    <div class="panel"><div class="panel-head"><h2>Atenção nos EPIs</h2></div>
+      ${(low.length||caBad.length)?`<div class="table-wrap"><table class="t"><thead><tr><th>EPI</th><th>Situação</th><th class="r">Estoque</th></tr></thead><tbody>${[...new Set([...caBad,...low])].map(p=>{const ca=caStatus(p);const isLow=low.includes(p);return`<tr class="click" data-action="edit-epi" data-id="${p.id}"><td><b>${esc(p.nome)}</b><div class="small muted">CA ${esc(p.ca||'—')}</div></td><td><div style="display:flex;gap:6px;flex-wrap:wrap">${ca&&ca.level!=='ok'?`<span class="chip ${ca.level}">${ca.text}</span>`:''}${isLow?'<span class="chip warn">Estoque baixo</span>':''}</div></td><td class="r num">${Number(p.estoque||0)}</td></tr>`;}).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Estoques e CAs em dia.</div>'}
+    </div>
+  </div>`;
+}
+
+/* ---------- Colaboradores ---------- */
+function vColabs(){
+  const setores=[...new Set(S.colabs.map(c=>c.setor).filter(Boolean))].sort();
+  const last={};for(const e of S.entregas){if(!last[e.colaboradorId]||last[e.colaboradorId]<e.data)last[e.colaboradorId]=e.data;}
+  const rows=S.colabs.map(c=>{const bio=(c.faceDescriptors||[]).length;
+    return`<tr class="click" data-href="#colaborador/${encodeURIComponent(c.id)}" data-s="${esc(norm([c.nome,c.matricula,c.funcao,c.setor,c.cpf].join(' ')))}" data-setor="${esc(c.setor||'')}" data-ativo="${c.ativo===false?'0':'1'}">
+      <td><div class="person">${avatar(c)}<div><b>${esc(c.nome)}</b><span>Matrícula ${esc(c.matricula||'—')}</span></div></div></td>
+      <td>${esc(c.funcao||'—')}</td><td>${esc(c.setor||'—')}</td>
+      <td>${c.ativo===false?'<span class="chip">Inativo</span>':bio?'<span class="chip ok">Biometria ok</span>':'<span class="chip warn">Sem biometria</span>'}</td>
+      <td>${last[c.id]?fmtDate(last[c.id]):'<span class="muted">Nunca</span>'}</td></tr>`;}).join('');
+  return head('Colaboradores',`${S.colabs.filter(c=>c.ativo!==false).length} ativos`,`<button class="btn" data-action="import-colabs">Importar planilha</button><button class="btn btn-primary" data-action="new-colab">${I.plus} Novo colaborador</button>`)+
+  `<div class="panel"><div class="toolbar"><div class="search">${I.search}<input class="input" id="q-colab" placeholder="Buscar por nome, matrícula, função ou CPF" autocomplete="off"></div>
+   <select class="input" id="f-setor" style="width:auto;min-width:170px"><option value="">Todos os setores</option>${setores.map(s=>`<option>${esc(s)}</option>`).join('')}</select>
+   <label class="check small" style="align-items:center"><input type="checkbox" id="f-inativos"> Mostrar inativos</label></div>
+   ${S.colabs.length?`<div class="table-wrap"><table class="t" id="t-colabs"><thead><tr><th>Colaborador</th><th>Função</th><th>Setor</th><th>Biometria</th><th>Última entrega</th></tr></thead><tbody>${rows}</tbody></table></div><div class="empty" id="no-res" hidden>Nenhum colaborador encontrado com esse filtro.</div>`
+   :`<div class="empty"><h3>Nenhum colaborador cadastrado</h3><p>Cadastre um por vez ou importe uma planilha com vários de uma só vez.</p><div class="actions"><button class="btn btn-primary" data-action="new-colab">${I.plus} Novo colaborador</button><button class="btn" data-action="import-colabs">Importar planilha</button></div></div>`}</div>`;
+}
+AFTER.colaboradores=()=>{
+  const apply=()=>{const q=norm($('#q-colab')?.value),s=$('#f-setor')?.value||'',ina=$('#f-inativos')?.checked;let n=0;
+    $$('#t-colabs tbody tr').forEach(tr=>{const ok=(!q||tr.dataset.s.includes(q))&&(!s||tr.dataset.setor===s)&&(ina||tr.dataset.ativo==='1');tr.hidden=!ok;if(ok)n++;});
+    const nr=$('#no-res');if(nr)nr.hidden=n>0;};
+  ['q-colab','f-setor','f-inativos'].forEach(id=>{const el=$('#'+id);if(el)el.addEventListener('input',apply);});apply();
+};
+function vColab(id){
+  const c=colabById(id);if(!c)return head('Colaborador não encontrado','',`<a class="btn" href="#colaboradores">Voltar</a>`);
+  const ents=S.entregas.filter(e=>e.colaboradorId===id);const due=dueFor(id);
+  const emUso=Object.entries(due).map(([eid,r])=>({p:epiById(eid),...r})).filter(x=>x.p).sort((a,b)=>(a.dias??9999)-(b.dias??9999));
+  const bio=(c.faceDescriptors||[]).length;
+  return `<div class="page-head"><div class="person">${avatar(c,true)}<div><h1>${esc(c.nome)}</h1><p>${esc([c.funcao,c.setor,c.unidade].filter(Boolean).join(' · ')||'Sem função/setor')} · Matrícula ${esc(c.matricula||'—')}</p>
+    <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">${c.ativo===false?'<span class="chip">Inativo</span>':''}${bio?'<span class="chip ok">Biometria facial cadastrada</span>':'<span class="chip warn">Sem biometria</span>'}</div></div></div>
+    <div class="actions"><button class="btn" data-action="edit-colab" data-id="${c.id}">Editar</button><a class="btn" href="#relatorios" data-action="ficha" data-id="${c.id}">${I.report} Ficha de EPI</a>${c.ativo!==false?`<button class="btn btn-primary" data-action="deliver-to" data-id="${c.id}">${I.plus} Nova entrega</button>`:''}</div></div>
+  <div class="grid g2">
+    <div class="panel"><div class="panel-head"><h2>EPIs em uso</h2></div>${emUso.length?`<div class="table-wrap"><table class="t"><thead><tr><th>EPI</th><th>Recebido em</th><th>Próxima troca</th></tr></thead><tbody>${emUso.map(x=>`<tr><td><b>${esc(x.p.nome)}</b><div class="small muted">CA ${esc(x.p.ca||'—')}</div></td><td>${fmtDate(x.ultima)}</td><td>${x.vence?`<span class="chip ${x.dias<0?'bad':x.dias<=7?'warn':'ok'}">${fmtDate(x.vence)}</span>`:'<span class="muted small">Sem prazo</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Nenhum EPI entregue ainda.</div>'}</div>
+    <div class="panel panel-pad"><h2 style="margin-bottom:12px">Dados</h2><dl style="display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0">
+      <dt class="muted">CPF</dt><dd style="margin:0">${esc(c.cpf||'—')}</dd><dt class="muted">Admissão</dt><dd style="margin:0">${fmtDate(c.admissao)}</dd>
+      <dt class="muted">Unidade</dt><dd style="margin:0">${esc(c.unidade||'—')}</dd><dt class="muted">Biometria</dt><dd style="margin:0">${bio?`Autorizada em ${fmtDate(c.consentimentoEm)}`:'Não cadastrada'}</dd></dl></div>
+  </div>
+  <div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Histórico de entregas</h2><span class="small muted">${ents.length} registro${ents.length===1?'':'s'}</span></div>
+  ${ents.length?`<div class="table-wrap"><table class="t"><thead><tr><th>Data</th><th>EPIs</th><th>Motivo</th><th>Confirmação</th></tr></thead><tbody>${ents.map(e=>`<tr><td>${fmtDT(e.data)}</td><td>${(e.itens||[]).map(i=>`${esc(i.qtd)}× ${esc(i.nome)} <span class="muted small">CA ${esc(i.ca||'—')}</span>`).join('<br>')}</td><td class="small">${[...new Set((e.itens||[]).map(i=>i.motivo))].map(esc).join(', ')}</td><td>${valChip(e.validacao)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Sem entregas.</div>'}</div>`;
+}
+function valChip(v){if(!v)return'<span class="chip">—</span>';return v.metodo==='facial'?'<span class="chip ok">Reconhecimento facial</span>':'<span class="chip">Assinatura na tela</span>';}
+
+let F=null; // colab form temp
+function colabForm(c){
+  c=c||{};F={descriptors:c.faceDescriptors||null,foto:c.foto||null,consentimentoEm:c.consentimentoEm||null,changedBio:false};
+  const setores=[...new Set(S.colabs.map(x=>x.setor).filter(Boolean))].sort();const funcoes=[...new Set(S.colabs.map(x=>x.funcao).filter(Boolean))].sort();
+  const m=openModal(`<form data-form="colab" data-id="${esc(c.id||'')}"><div class="modal-head"><h2>${c.id?'Editar colaborador':'Novo colaborador'}</h2><button type="button" class="icon-btn" data-close aria-label="Fechar">${I.close}</button></div>
+  <div class="modal-body"><div class="form">
+    <div class="field full"><label for="f-nome">Nome completo</label><input class="input" id="f-nome" name="nome" required value="${esc(c.nome||'')}"></div>
+    <div class="field"><label for="f-mat">Matrícula</label><input class="input" id="f-mat" name="matricula" required value="${esc(c.matricula||'')}"></div>
+    <div class="field"><label for="f-cpf">CPF</label><input class="input" id="f-cpf" name="cpf" inputmode="numeric" value="${esc(c.cpf||'')}"></div>
+    <div class="field"><label for="f-fun">Função</label><input class="input" id="f-fun" name="funcao" list="dl-fun" value="${esc(c.funcao||'')}"><datalist id="dl-fun">${funcoes.map(s=>`<option value="${esc(s)}">`).join('')}</datalist></div>
+    <div class="field"><label for="f-set">Setor</label><input class="input" id="f-set" name="setor" list="dl-set" value="${esc(c.setor||'')}"><datalist id="dl-set">${setores.map(s=>`<option value="${esc(s)}">`).join('')}</datalist></div>
+    <div class="field"><label for="f-uni">Unidade</label><input class="input" id="f-uni" name="unidade" value="${esc(c.unidade||cfg().unidade||'')}"></div>
+    <div class="field"><label for="f-adm">Admissão</label><input class="input" type="date" id="f-adm" name="admissao" value="${esc(c.admissao||'')}"></div>
+    <div class="section-title">Biometria facial</div>
+    <label class="check full"><input type="checkbox" name="consent" id="f-consent" ${c.consentimentoEm?'checked':''}><span>O colaborador autorizou, por escrito, o uso da sua imagem facial para confirmar o recebimento de EPIs (dado biométrico, LGPD art. 11).</span></label>
+    <div class="full" id="bio-box"></div>
+    ${c.id?`<label class="check full"><input type="checkbox" name="ativo" ${c.ativo===false?'':'checked'}><span>Colaborador ativo</span></label>`:''}
+  </div></div>
+  <div class="modal-foot"><button type="button" class="btn" data-close>Cancelar</button><button class="btn btn-primary" type="submit">Salvar colaborador</button></div></form>`,{wide:true});
+  $$('[data-close]',m).forEach(b=>b.onclick=()=>closeModal(m));
+  const bioBox=$('#bio-box',m);
+  const paint=()=>{const n=(F.descriptors||[]).length;const consent=$('#f-consent',m).checked;
+    bioBox.innerHTML=`<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px;border:1px solid var(--line);border-radius:8px">${F.foto?`<img class="avatar lg" src="${esc(F.foto)}" alt="">`:`<div class="avatar lg">${esc(initials($('#f-nome',m).value))}</div>`}
+      <div style="flex:1;min-width:180px"><b>${n?'Rosto cadastrado':'Rosto não cadastrado'}</b><div class="small muted">${n?n+' amostras salvas. Recadastre se a aparência mudar muito.':consent?'Abra a câmera e capture 3 amostras.':'Marque a autorização acima para cadastrar.'}</div></div>
+      <button type="button" class="btn ${n?'':'btn-dark'}" data-bio ${consent?'':'disabled'}>${I.face} ${n?'Recadastrar rosto':'Cadastrar rosto'}</button>${n?'<button type="button" class="btn btn-danger" data-bio-del>Remover biometria</button>':''}</div>`;
+    const b=$('[data-bio]',bioBox);b.onclick=async()=>{const r=await cameraModal({mode:'enroll',colab:c,title:'Cadastrar rosto'});if(r){F.descriptors=r.descriptors;F.foto=r.foto;F.consentimentoEm=F.consentimentoEm||new Date().toISOString();F.changedBio=true;paint();}};
+    const d=$('[data-bio-del]',bioBox);if(d)d.onclick=()=>{F.descriptors=null;F.changedBio=true;paint();};
+  };
+  $('#f-consent',m).addEventListener('change',e=>{if(!e.target.checked){F.descriptors=null;F.consentimentoEm=null;}paint();});paint();
+}
+async function saveColab(form){
+  const fd=new FormData(form);const id=form.dataset.id||newId();const old=colabById(id)||{};
+  const matricula=String(fd.get('matricula')||'').trim();
+  if(S.colabs.some(c=>c.id!==id&&String(c.matricula||'').trim()===matricula&&matricula)){toast('Já existe um colaborador com a matrícula '+matricula+'.','bad');return;}
+  const consent=!!fd.get('consent');
+  const data={...old,nome:String(fd.get('nome')).trim(),matricula,cpf:String(fd.get('cpf')||'').trim(),funcao:String(fd.get('funcao')||'').trim(),setor:String(fd.get('setor')||'').trim(),unidade:String(fd.get('unidade')||'').trim(),admissao:fd.get('admissao')||'',
+    ativo:form.dataset.id?!!fd.get('ativo'):true,foto:F.foto||null,faceDescriptors:consent?(F.descriptors||null):null,consentimentoEm:consent?(F.consentimentoEm||new Date().toISOString()):null,atualizadoEm:new Date().toISOString(),criadoEm:old.criadoEm||new Date().toISOString()};
+  if(!consent){data.faceDescriptors=null;}
+  try{await Store.set('colaboradores',id,data);closeModal(form,{silent:true});toast('Colaborador salvo.');if(!form.dataset.id)location.hash='#colaborador/'+encodeURIComponent(id);else render(true);}
+  catch(e){toast(errMsg(e),'bad');}
+}
+function importModal(){
+  const m=openModal(`<div class="modal-head"><h2>Importar colaboradores</h2><button class="icon-btn" data-close aria-label="Fechar">${I.close}</button></div>
+  <div class="modal-body"><p style="margin-top:0">Cole as linhas da planilha (ou escolha um arquivo .csv). A primeira linha deve ter os títulos das colunas. Colunas aceitas: <b>nome</b>, <b>matricula</b>, cpf, funcao, setor, unidade, admissao (dd/mm/aaaa).</p>
+  <input type="file" accept=".csv,.txt" class="input" id="imp-file" style="margin-bottom:10px">
+  <textarea class="input" id="imp-text" rows="8" placeholder="nome;matricula;funcao;setor&#10;Maria Souza;1023;Operadora de filetagem;Produção" data-nofocus="1"></textarea>
+  <p class="small muted" id="imp-info"></p></div>
+  <div class="modal-foot"><button class="btn" data-close>Cancelar</button><button class="btn btn-primary" id="imp-go">Importar</button></div>`,{wide:true});
+  $$('[data-close]',m).forEach(b=>b.onclick=()=>closeModal(m));
+  $('#imp-file',m).onchange=async e=>{const f=e.target.files[0];if(f){$('#imp-text',m).value=await f.text();preview();}};
+  const parse=()=>{const txt=$('#imp-text',m).value.replace(/^\uFEFF/,'').trim();if(!txt)return[];const lines=txt.split(/\r?\n/).filter(l=>l.trim());
+    const sep=lines[0].includes('\t')?'\t':lines[0].includes(';')?';':',';const hd=lines[0].split(sep).map(h=>norm(h.trim()).replace(/[^a-z]/g,''));
+    return lines.slice(1).map(l=>{const v=l.split(sep);const o={};hd.forEach((h,i)=>o[h]=(v[i]||'').trim());return o;}).filter(o=>o.nome);};
+  const preview=()=>{const r=parse();$('#imp-info',m).textContent=r.length?r.length+' colaborador(es) encontrados.':'';};
+  $('#imp-text',m).addEventListener('input',preview);
+  $('#imp-go',m).onclick=async()=>{const rows=parse();if(!rows.length){toast('Nenhuma linha válida. Confira a coluna "nome".','warn');return;}
+    const btn=$('#imp-go',m);btn.disabled=true;let n=0,skip=0;
+    for(const r of rows){const mat=r.matricula||r.matr||r.registro||'';if(mat&&S.colabs.some(c=>String(c.matricula)===mat)){skip++;continue;}
+      let adm=r.admissao||'';const mm=adm.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(mm)adm=`${mm[3]}-${pad2(mm[2])}-${pad2(mm[1])}`;
+      try{await Store.set('colaboradores',newId(),{nome:r.nome,matricula:mat,cpf:r.cpf||'',funcao:r.funcao||r.cargo||'',setor:r.setor||'',unidade:r.unidade||cfg().unidade||'',admissao:adm,ativo:true,criadoEm:new Date().toISOString()});n++;btn.textContent='Importando… '+n;}
+      catch(e){toast(errMsg(e),'bad');break;}}
+    closeModal(m,{silent:true});toast(n+' importado(s)'+(skip?', '+skip+' ignorado(s) por matrícula repetida':'')+'.');render(true);};
+}
+
+/* ---------- EPIs ---------- */
+function vEpis(){
+  const rows=S.epis.slice().sort(byName).map(p=>{const ca=caStatus(p);const low=Number(p.estoque||0)<=Number(p.estoqueMinimo||0);
+    return`<tr class="click" data-action="edit-epi" data-id="${p.id}" data-s="${esc(norm([p.nome,p.ca,p.fabricante,p.categoria].join(' ')))}" data-ativo="${p.ativo===false?'0':'1'}">
+    <td><b>${esc(p.nome)}</b><div class="small muted">${esc([p.fabricante,p.descricao].filter(Boolean).join(' · ')||p.categoria||'')}</div></td>
+    <td>${esc(p.ca||'—')}<div>${ca?`<span class="chip ${ca.level}">${ca.text}</span>`:'<span class="small muted">Sem validade</span>'}</div></td>
+    <td>${Number(p.periodicidadeDias)?p.periodicidadeDias+' dias':'<span class="muted">—</span>'}</td>
+    <td class="r num">${Number(p.estoque||0)} ${low&&p.ativo!==false?'<span class="chip warn">Baixo</span>':''}</td>
+    <td class="r num">${money(p.custoUnit)}</td>
+    <td class="r"><button class="btn" data-action="stock-in" data-id="${p.id}">+ Estoque</button></td></tr>`;}).join('');
+  return head('EPIs','Catálogo com CA, periodicidade de troca e estoque.',`<button class="btn btn-primary" data-action="new-epi">${I.plus} Novo EPI</button>`)+
+  `<div class="panel"><div class="toolbar"><div class="search">${I.search}<input class="input" id="q-epi" placeholder="Buscar por nome, CA ou fabricante" autocomplete="off"></div><label class="check small" style="align-items:center"><input type="checkbox" id="f-epi-ina"> Mostrar inativos</label></div>
+  ${S.epis.length?`<div class="table-wrap"><table class="t" id="t-epis"><thead><tr><th>EPI</th><th>CA</th><th>Troca</th><th class="r">Estoque</th><th class="r">Custo unit.</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+  :`<div class="empty"><h3>Nenhum EPI cadastrado</h3><p>Cadastre luvas, botas, protetores auriculares, aventais e os demais itens que a empresa fornece.</p><div class="actions"><button class="btn btn-primary" data-action="new-epi">${I.plus} Novo EPI</button></div></div>`}</div>`;
+}
+AFTER.epis=()=>{const apply=()=>{const q=norm($('#q-epi')?.value),ina=$('#f-epi-ina')?.checked;$$('#t-epis tbody tr').forEach(tr=>{tr.hidden=!((!q||tr.dataset.s.includes(q))&&(ina||tr.dataset.ativo==='1'));});};
+  ['q-epi','f-epi-ina'].forEach(id=>{const el=$('#'+id);if(el)el.addEventListener('input',apply);});apply();};
+function epiForm(p){
+  p=p||{};
+  const m=openModal(`<form data-form="epi" data-id="${esc(p.id||'')}"><div class="modal-head"><h2>${p.id?'Editar EPI':'Novo EPI'}</h2><button type="button" class="icon-btn" data-close aria-label="Fechar">${I.close}</button></div>
+  <div class="modal-body"><div class="form">
+    <div class="field full"><label for="e-nome">Nome do EPI</label><input class="input" id="e-nome" name="nome" required placeholder="Ex.: Luva nitrílica cano longo" value="${esc(p.nome||'')}"></div>
+    <div class="field"><label for="e-ca">Número do CA</label><input class="input" id="e-ca" name="ca" inputmode="numeric" value="${esc(p.ca||'')}"></div>
+    <div class="field"><label for="e-val">Validade do CA</label><input class="input" type="date" id="e-val" name="validadeCA" value="${esc(p.validadeCA||'')}"></div>
+    <div class="field"><label for="e-fab">Fabricante</label><input class="input" id="e-fab" name="fabricante" value="${esc(p.fabricante||'')}"></div>
+    <div class="field"><label for="e-cat">Categoria</label><select class="input" id="e-cat" name="categoria">${CATEGORIAS.map(c=>`<option ${p.categoria===c?'selected':''}>${c}</option>`).join('')}</select></div>
+    <div class="field full"><label for="e-desc">Descrição / tamanho</label><input class="input" id="e-desc" name="descricao" placeholder="Ex.: tamanho G, cor branca" value="${esc(p.descricao||'')}"></div>
+    <div class="field"><label for="e-per">Troca a cada (dias)</label><input class="input" type="number" min="0" id="e-per" name="periodicidadeDias" value="${esc(p.periodicidadeDias??'')}"><div class="hint">Deixe em branco se não houver prazo fixo.</div></div>
+    <div class="field"><label for="e-custo">Custo unitário (R$)</label><input class="input" type="number" min="0" step="0.01" id="e-custo" name="custoUnit" value="${esc(p.custoUnit??'')}"></div>
+    <div class="field"><label for="e-est">Estoque atual</label><input class="input" type="number" step="1" id="e-est" name="estoque" value="${esc(p.estoque??0)}"></div>
+    <div class="field"><label for="e-min">Estoque mínimo</label><input class="input" type="number" min="0" step="1" id="e-min" name="estoqueMinimo" value="${esc(p.estoqueMinimo??0)}"></div>
+    ${p.id?`<label class="check full"><input type="checkbox" name="ativo" ${p.ativo===false?'':'checked'}><span>EPI ativo (aparece na tela de entrega)</span></label>`:''}
+  </div></div>
+  <div class="modal-foot"><button type="button" class="btn" data-close>Cancelar</button><button class="btn btn-primary" type="submit">Salvar EPI</button></div></form>`,{wide:true});
+  $$('[data-close]',m).forEach(b=>b.onclick=()=>closeModal(m));
+}
+async function saveEpi(form){
+  const fd=new FormData(form);const id=form.dataset.id||newId();const old=epiById(id)||{};const n=k=>fd.get(k)===''?null:Number(fd.get(k));
+  const data={...old,nome:String(fd.get('nome')).trim(),ca:String(fd.get('ca')||'').trim(),validadeCA:fd.get('validadeCA')||'',fabricante:String(fd.get('fabricante')||'').trim(),categoria:fd.get('categoria'),descricao:String(fd.get('descricao')||'').trim(),
+    periodicidadeDias:n('periodicidadeDias'),custoUnit:n('custoUnit')||0,estoque:n('estoque')||0,estoqueMinimo:n('estoqueMinimo')||0,ativo:form.dataset.id?!!fd.get('ativo'):true,atualizadoEm:new Date().toISOString()};
+  try{await Store.set('epis',id,data);closeModal(form,{silent:true});toast('EPI salvo.');render(true);}catch(e){toast(errMsg(e),'bad');}
+}
+function stockIn(p){
+  const m=openModal(`<div class="modal-head"><h2>Entrada de estoque</h2><button class="icon-btn" data-close aria-label="Fechar">${I.close}</button></div>
+  <div class="modal-body"><p style="margin-top:0"><b>${esc(p.nome)}</b> · estoque atual <span class="num">${Number(p.estoque||0)}</span></p><div class="field"><label for="s-q">Quantidade recebida</label><input class="input" type="number" min="1" step="1" id="s-q" value="1"></div></div>
+  <div class="modal-foot"><button class="btn" data-close>Cancelar</button><button class="btn btn-primary" id="s-go">Adicionar ao estoque</button></div>`);
+  $$('[data-close]',m).forEach(b=>b.onclick=()=>closeModal(m));
+  $('#s-go',m).onclick=async()=>{const q=Number($('#s-q',m).value);if(!(q>0)){toast('Informe uma quantidade maior que zero.','warn');return;}
+    try{await Store.update('epis',p.id,{estoque:Number(p.estoque||0)+q});closeModal(m,{silent:true});toast('Estoque atualizado.');render(true);}catch(e){toast(errMsg(e),'bad');}};
+}
+
+/* ---------- Entrega (wizard) ---------- */
+let W=newWizard();
+function newWizard(){return{step:1,colabId:null,via:null,itens:{},obs:'',valid:null,saving:false,done:null};}
+function startDelivery(colabId,epiId){
+  W=newWizard();W.colabId=colabId;W.step=2;
+  const due=dueFor(colabId);
+  for(const [eid,r] of Object.entries(due)){const p=epiById(eid);if(p&&p.ativo!==false&&r.dias!=null&&r.dias<=0)W.itens[eid]={qtd:1,motivo:'Troca periódica'};}
+  if(epiId&&!W.itens[epiId])W.itens[epiId]={qtd:1,motivo:'Troca periódica'};
+  if(location.hash==='#entrega')render(true);else location.hash='#entrega';
+}
+function vEntrega(){
+  if(W.done){const c=colabById(W.done.colabId);
+    return`<div class="panel success"><div class="mark">${I.check}</div><h1>Entrega registrada</h1><p class="muted">${esc(c?c.nome:'')} · ${W.done.n} item(ns) · ${fmtDT(W.done.data)}</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px"><button class="btn btn-primary btn-lg" data-action="wizard-reset">${I.plus} Nova entrega</button><button class="btn btn-lg" data-action="ficha" data-id="${W.done.colabId}">${I.report} Ver ficha de EPI</button></div></div>`;}
+  const st=['Colaborador','EPIs','Confirmação'];
+  const steps=`<div class="steps">${st.map((s,i)=>`<div class="${W.step===i+1?'on':W.step>i+1?'done':''}"><b>${W.step>i+1?'✓':i+1}</b>${s}</div>`).join('')}</div>`;
+  const c=colabById(W.colabId);
+  if(W.step===1||!c){
+    const ativos=S.colabs.filter(x=>x.ativo!==false);const nBio=enrolled().length;
+    return head('Nova entrega','Identifique quem vai receber os EPIs.')+steps+
+    (ativos.length?`<div class="grid g2"><button class="face-cta" data-action="identify">${I.face.replace('<svg','<svg class="big"')}<b>Identificar pelo rosto</b><span>${nBio?`Aponte a câmera para o colaborador. ${nBio} pessoa${nBio>1?'s':''} com biometria cadastrada.`:'Nenhum colaborador tem biometria ainda. Cadastre o rosto na ficha do colaborador.'}</span><span class="btn btn-primary">${I.face} Abrir câmera</span></button>
+    <div class="panel"><div class="toolbar"><div class="search">${I.search}<input class="input" id="q-pick" placeholder="Ou busque pelo nome ou matrícula" autocomplete="off"></div></div>
+    <div class="pick-list">${ativos.map(x=>`<button class="pick-row" data-action="pick-colab" data-id="${x.id}" data-s="${esc(norm(x.nome+' '+x.matricula+' '+x.setor))}"><div class="person">${avatar(x)}<div><b>${esc(x.nome)}</b><span>${esc([x.matricula,x.setor].filter(Boolean).join(' · '))}</span></div></div>${(x.faceDescriptors||[]).length?'':'<span class="chip warn">Sem biometria</span>'}</button>`).join('')}</div></div></div>`
+    :`<div class="panel"><div class="empty"><h3>Nenhum colaborador ativo</h3><p>Cadastre colaboradores antes de registrar entregas.</p><div class="actions"><button class="btn btn-primary" data-action="new-colab">${I.plus} Novo colaborador</button></div></div></div>`);
+  }
+  const who=`<div class="panel panel-pad" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap"><div class="person">${avatar(c,false)}<div><b>${esc(c.nome)}</b><span>${esc([c.matricula&&'Matrícula '+c.matricula,c.funcao,c.setor].filter(Boolean).join(' · '))}</span></div></div>${W.via==='facial'?'<span class="chip ok">Identificado pelo rosto</span>':''}<button class="btn" data-action="wizard-back1">Trocar colaborador</button></div>`;
+  if(W.step===2){
+    const due=dueFor(c.id);const epis=S.epis.filter(p=>p.ativo!==false).sort(byName);
+    const nSel=Object.keys(W.itens).length;
+    return head('Nova entrega','Selecione os EPIs entregues agora.')+steps+who+
+    (epis.length?`<div class="epi-grid">${epis.map(p=>{const sel=W.itens[p.id];const ca=caStatus(p);const d=due[p.id];const est=Number(p.estoque||0);
+      return`<div class="epi-card ${sel?'sel':''}"><label class="check top"><input type="checkbox" data-action="toggle-epi" data-id="${p.id}" ${sel?'checked':''}><span><b>${esc(p.nome)}</b><span class="small muted">CA ${esc(p.ca||'—')}${p.descricao?' · '+esc(p.descricao):''}</span></span></label>
+      <div class="meta">${ca&&ca.level!=='ok'?`<span class="chip ${ca.level}">${ca.text}</span>`:''}${d&&d.dias!=null?(d.dias<=0?`<span class="chip bad">Troca vencida</span>`:d.dias<=7?`<span class="chip warn">Troca em ${d.dias}d</span>`:''):''}${d?`<span class="chip">Recebeu em ${fmtDate(d.ultima)}</span>`:''}<span class="chip ${est<=0?'bad':est<=Number(p.estoqueMinimo||0)?'warn':''}">Estoque ${est}</span></div>
+      ${sel?`<div class="opts"><input class="input" type="number" min="1" step="1" value="${esc(sel.qtd)}" data-qtd="${p.id}" aria-label="Quantidade"><select class="input" data-motivo="${p.id}" aria-label="Motivo">${MOTIVOS.map(mo=>`<option ${sel.motivo===mo?'selected':''}>${mo}</option>`).join('')}</select></div>`:''}</div>`;}).join('')}</div>
+    <div class="field" style="margin-top:16px"><label for="w-obs">Observação (opcional)</label><input class="input" id="w-obs" value="${esc(W.obs)}" placeholder="Ex.: luva anterior rasgou na filetagem"></div>
+    <div class="summary-bar"><span><b class="num">${nSel}</b> EPI${nSel===1?'':'s'} selecionado${nSel===1?'':'s'}</span><button class="btn btn-primary btn-lg" data-action="wizard-to3" ${nSel?'':'disabled'}>Continuar para confirmação</button></div>`
+    :`<div class="panel"><div class="empty"><h3>Nenhum EPI ativo</h3><p>Cadastre os EPIs antes de registrar a entrega.</p><div class="actions"><button class="btn btn-primary" data-action="new-epi">${I.plus} Novo EPI</button></div></div></div>`);
+  }
+  // step 3
+  const itens=Object.entries(W.itens).map(([id,v])=>({p:epiById(id),...v})).filter(x=>x.p);
+  const hasBio=(c.faceDescriptors||[]).length>0;
+  return head('Nova entrega','O colaborador confirma o recebimento.')+steps+who+
+  `<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Itens</h2><button class="btn" data-action="wizard-back2">Alterar</button></div><div class="table-wrap"><table class="t"><thead><tr><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th></tr></thead><tbody>${itens.map(x=>`<tr><td>${esc(x.p.nome)}</td><td>${esc(x.p.ca||'—')}</td><td class="r num">${esc(x.qtd)}</td><td class="small">${esc(x.motivo)}</td></tr>`).join('')}</tbody></table></div>
+  <div class="panel-pad"><p class="termo">${esc(TERMO)}</p></div></div>
+  <div class="panel panel-pad">${W.valid?`<h2 style="margin-bottom:12px">Recebimento confirmado</h2><div class="proof">${W.valid.foto?`<img src="${esc(W.valid.foto)}" alt="Foto da confirmação">`:''}${W.valid.assinatura?`<img src="${esc(W.valid.assinatura)}" alt="Assinatura">`:''}<div>${valChip(W.valid)}<div class="small muted" style="margin-top:6px">${fmtDT(W.valid.dataHora)}${W.valid.distancia!=null?`<br>Distância facial ${String(W.valid.distancia).replace('.',',')} (limite ${String(cfg().limiar).replace('.',',')})`:''}</div></div></div>
+    <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap"><button class="btn" data-action="val-clear">Refazer confirmação</button><button class="btn btn-primary btn-lg" data-action="save-delivery" ${W.saving?'disabled':''}>${W.saving?'Registrando…':'Registrar entrega'}</button></div>`
+  :`<h2 style="margin-bottom:6px">Como o colaborador vai confirmar?</h2><p class="muted" style="margin-top:0">A confirmação fica anexada à ficha de EPI.</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn ${hasBio?'btn-primary':''} btn-lg" data-action="val-face" ${hasBio?'':'disabled'}>${I.face} Confirmar com reconhecimento facial</button>
+      ${hasBio?'':'<span class="small muted">Este colaborador ainda não tem biometria cadastrada.</span>'}
+      <button class="btn btn-lg ${hasBio?'':'btn-primary'}" data-action="val-sig">${I.pen} Assinar na tela</button></div>`}</div></div>`;
+}
+AFTER.entrega=()=>{
+  const q=$('#q-pick');if(q)q.addEventListener('input',()=>{const v=norm(q.value);$$('.pick-row').forEach(r=>r.hidden=!!v&&!r.dataset.s.includes(v));});
+  $$('[data-qtd]').forEach(el=>el.addEventListener('input',()=>{const it=W.itens[el.dataset.qtd];if(it)it.qtd=Math.max(1,parseInt(el.value)||1);}));
+  $$('[data-motivo]').forEach(el=>el.addEventListener('change',()=>{const it=W.itens[el.dataset.motivo];if(it)it.motivo=el.value;}));
+  const o=$('#w-obs');if(o)o.addEventListener('input',()=>W.obs=o.value);
+};
+async function wizardTo3(){
+  const probs=[];
+  for(const [id,v] of Object.entries(W.itens)){const p=epiById(id);if(!p)continue;const ca=caStatus(p);
+    if(ca&&ca.level==='bad')probs.push(`<b>${esc(p.nome)}</b>: CA vencido em ${fmtDate(p.validadeCA)}`);
+    if(Number(p.estoque||0)<v.qtd)probs.push(`<b>${esc(p.nome)}</b>: estoque (${Number(p.estoque||0)}) menor que a quantidade`);}
+  if(probs.length&&!await askConfirm('Atenção antes de continuar:<br><br>'+probs.join('<br>')+'<br><br>A NR-06 exige EPI com CA válido. Deseja continuar mesmo assim?',{ok:'Continuar'}))return;
+  W.step=3;W.valid=null;render(true);window.scrollTo(0,0);
+}
+async function saveDelivery(){
+  const c=colabById(W.colabId);if(!c||!W.valid||W.saving)return;
+  W.saving=true;render(true);
+  const id=newId(),now=new Date().toISOString();
+  const itens=Object.entries(W.itens).map(([eid,v])=>{const p=epiById(eid);return p?{epiId:eid,nome:p.nome,ca:p.ca||'',qtd:Number(v.qtd)||1,motivo:v.motivo,custoUnit:Number(p.custoUnit)||0,proximaTroca:Number(p.periodicidadeDias)?addDays(now,p.periodicidadeDias):null}:null;}).filter(Boolean);
+  const entrega={colaboradorId:c.id,colaboradorNome:c.nome,matricula:c.matricula||'',cpf:c.cpf||'',setor:c.setor||'',funcao:c.funcao||'',data:now,itens,obs:W.obs||'',
+    validacao:{metodo:W.valid.metodo,distancia:W.valid.distancia??null,dataHora:W.valid.dataHora},registradoPor:S.uid||null};
+  try{
+    await Store.set('evidencias',id,{colaboradorId:c.id,entregaId:id,metodo:W.valid.metodo,foto:W.valid.foto||null,assinatura:W.valid.assinatura||null,dataHora:W.valid.dataHora});
+    await Store.set('entregas',id,entrega);
+    for(const it of itens){const p=epiById(it.epiId);if(p)await Store.update('epis',p.id,{estoque:Number(p.estoque||0)-it.qtd});}
+    delete S.evCache[c.id];
+    W.done={colabId:c.id,n:sum(itens.map(i=>i.qtd)),data:now};
+  }catch(e){toast(errMsg(e),'bad');}
+  W.saving=false;render(true);window.scrollTo(0,0);
+}
+
+/* ---------- Relatórios ---------- */
+const R={tab:'geral',de:null,ate:null,setor:'',epi:'',colabId:''};
+function filtered(){
+  const de=new Date((R.de||localISODate())+'T00:00:00').toISOString(),ate=new Date((R.ate||localISODate())+'T23:59:59.999').toISOString();
+  return S.entregas.filter(e=>e.data>=de&&e.data<=ate&&(!R.setor||e.setor===R.setor)&&(!R.epi||(e.itens||[]).some(i=>i.epiId===R.epi)));
+}
+function geralData(){
+  const ents=filtered();const rows=[];
+  for(const e of ents)for(const it of (e.itens||[])){if(R.epi&&it.epiId!==R.epi)continue;rows.push({e,it});}
+  const porEpi={},porSetor={};
+  for(const {e,it} of rows){const k=it.epiId;porEpi[k]=porEpi[k]||{nome:it.nome,ca:it.ca,qtd:0,custo:0};porEpi[k].qtd+=it.qtd;porEpi[k].custo+=it.qtd*(it.custoUnit||0);
+    const s=e.setor||'Sem setor';porSetor[s]=porSetor[s]||{qtd:0,custo:0,pessoas:new Set()};porSetor[s].qtd+=it.qtd;porSetor[s].custo+=it.qtd*(it.custoUnit||0);porSetor[s].pessoas.add(e.colaboradorId);}
+  return{ents,rows,porEpi:Object.values(porEpi).sort((a,b)=>b.qtd-a.qtd),porSetor:Object.entries(porSetor).sort((a,b)=>b[1].qtd-a[1].qtd),
+    total:sum(rows.map(r=>r.it.qtd)),custo:sum(rows.map(r=>r.it.qtd*(r.it.custoUnit||0))),pessoas:new Set(ents.map(e=>e.colaboradorId)).size};
+}
+function geralHTML(d){
+  const c=cfg();
+  return`<div class="doc"><header class="doc-h"><div><div class="doc-k">Relatório geral de entrega de EPI</div><h1>${esc(c.empresa||'Empresa')}</h1><div>${esc([c.cnpj&&'CNPJ '+c.cnpj,c.unidade].filter(Boolean).join(' · '))}</div></div>
+  <div class="doc-meta">Período: ${fmtDate(R.de)} a ${fmtDate(R.ate)}${R.setor?'<br>Setor: '+esc(R.setor):''}${R.epi&&epiById(R.epi)?'<br>EPI: '+esc(epiById(R.epi).nome):''}</div></header>
+  <div class="doc-sum"><div><b>${d.ents.length}</b><span>entregas</span></div><div><b>${d.total}</b><span>itens</span></div><div><b>${d.pessoas}</b><span>colaboradores</span></div><div><b>${money(d.custo)}</b><span>custo total</span></div></div>
+  <h2>Por EPI</h2><table><thead><tr><th>EPI</th><th>CA</th><th class="r">Quantidade</th><th class="r">Custo</th></tr></thead><tbody>${d.porEpi.map(x=>`<tr><td>${esc(x.nome)}</td><td>${esc(x.ca||'—')}</td><td class="r">${x.qtd}</td><td class="r">${money(x.custo)}</td></tr>`).join('')||'<tr><td colspan="4">Sem entregas no período.</td></tr>'}</tbody></table>
+  <h2>Por setor</h2><table><thead><tr><th>Setor</th><th class="r">Colaboradores</th><th class="r">Itens</th><th class="r">Custo</th></tr></thead><tbody>${d.porSetor.map(([s,x])=>`<tr><td>${esc(s)}</td><td class="r">${x.pessoas.size}</td><td class="r">${x.qtd}</td><td class="r">${money(x.custo)}</td></tr>`).join('')||'<tr><td colspan="4">—</td></tr>'}</tbody></table>
+  <h2>Entregas detalhadas</h2><table><thead><tr><th>Data</th><th>Colaborador</th><th>Setor</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>Confirmação</th></tr></thead><tbody>${d.rows.map(({e,it})=>`<tr><td>${fmtDT(e.data)}</td><td>${esc(e.colaboradorNome)}<br><small>Mat. ${esc(e.matricula||'—')}</small></td><td>${esc(e.setor||'—')}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${e.validacao&&e.validacao.metodo==='facial'?'Facial':'Assinatura'}</td></tr>`).join('')||'<tr><td colspan="8">Sem entregas no período.</td></tr>'}</tbody></table>
+  <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())}</footer></div>`;
+}
+function fichaHTML(c,ents,ev){
+  const k=cfg();
+  const rows=ents.slice().sort((a,b)=>a.data<b.data?-1:1).map(e=>{const v=ev[e.id]||{};const img=v.foto||v.assinatura;
+    return (e.itens||[]).map((it,i)=>`<tr><td>${i===0?fmtDT(e.data):''}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${it.proximaTroca?fmtDate(it.proximaTroca):'—'}</td>${i===0?`<td rowspan="${e.itens.length}" class="proofc">${img?`<img src="${esc(img)}" alt="">`:''}<div>${e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura na tela'}${e.registradoPor&&S.names[e.registradoPor]?'<br><small>Registrado por '+esc(S.names[e.registradoPor])+'</small>':''}</div></td>`:''}</tr>`).join('');}).join('');
+  return`<div class="doc"><header class="doc-h"><div><div class="doc-k">Ficha de controle de entrega de EPI · NR-06</div><h1>${esc(k.empresa||'Empresa')}</h1><div>${esc([k.cnpj&&'CNPJ '+k.cnpj,k.unidade].filter(Boolean).join(' · '))}</div></div>${c.foto?`<img class="doc-photo" src="${esc(c.foto)}" alt="">`:''}</header>
+  <table class="doc-id"><tr><th>Colaborador</th><td>${esc(c.nome)}</td><th>Matrícula</th><td>${esc(c.matricula||'—')}</td></tr><tr><th>CPF</th><td>${esc(c.cpf||'—')}</td><th>Admissão</th><td>${fmtDate(c.admissao)}</td></tr><tr><th>Função</th><td>${esc(c.funcao||'—')}</td><th>Setor</th><td>${esc(c.setor||'—')}</td></tr></table>
+  <p class="doc-termo"><b>Termo de responsabilidade.</b> ${esc(TERMO)}</p>
+  <table><thead><tr><th>Data</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>Próx. troca</th><th>Confirmação do colaborador</th></tr></thead><tbody>${rows||'<tr><td colspan="7">Nenhuma entrega registrada.</td></tr>'}</tbody></table>
+  <div class="doc-sign"><div>${esc(k.responsavel||'')}<br><span>Responsável pela entrega / SESMT</span></div></div>
+  <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())} · ${ents.length} entrega(s) registradas</footer></div>`;
+}
+function wrapDoc(title,inner){return`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)}</title><style>${DOC_CSS}body{margin:0;padding:24px;background:#fff}@media print{body{padding:0}}</style></head><body>${inner}</body></html>`;}
+function vRelatorios(){
+  if(!R.de){const n=new Date();R.de=localISODate(new Date(n.getFullYear(),n.getMonth(),1));R.ate=localISODate(n);}
+  const tabs=`<div class="tabs" role="tablist"><button class="${R.tab==='geral'?'on':''}" data-action="rtab" data-tab="geral">Relatório geral</button><button class="${R.tab==='ind'?'on':''}" data-action="rtab" data-tab="ind">Ficha individual</button></div>`;
+  if(R.tab==='geral'){
+    const setores=[...new Set(S.colabs.map(c=>c.setor).filter(Boolean))].sort();const d=geralData();
+    return head('Relatórios','Entregas por período, setor e EPI.')+tabs+
+    `<div class="panel" style="margin-bottom:16px"><div class="toolbar">
+      <div class="field"><label for="r-de">De</label><input class="input" type="date" id="r-de" value="${R.de}"></div>
+      <div class="field"><label for="r-ate">Até</label><input class="input" type="date" id="r-ate" value="${R.ate}"></div>
+      <div class="field"><label for="r-set">Setor</label><select class="input" id="r-set"><option value="">Todos</option>${setores.map(s=>`<option ${R.setor===s?'selected':''}>${esc(s)}</option>`).join('')}</select></div>
+      <div class="field"><label for="r-epi">EPI</label><select class="input" id="r-epi"><option value="">Todos</option>${S.epis.slice().sort(byName).map(p=>`<option value="${p.id}" ${R.epi===p.id?'selected':''}>${esc(p.nome)}</option>`).join('')}</select></div>
+      <div style="margin-left:auto;display:flex;gap:8px;align-self:flex-end;flex-wrap:wrap"><button class="btn" data-action="csv">${I.down} Planilha (CSV)</button><button class="btn" data-action="dl-geral">${I.down} Relatório (HTML)</button><button class="btn btn-dark" data-action="print-geral">${I.print} Imprimir / PDF</button></div></div></div>
+    <div class="doc-preview">${geralHTML(d)}</div>`;
+  }
+  const ativos=S.colabs.slice().sort(byName);
+  return head('Relatórios','Ficha de EPI de cada colaborador, com as confirmações anexadas.')+tabs+
+  `<div class="panel" style="margin-bottom:16px"><div class="toolbar"><div class="field" style="flex:1;min-width:240px"><label for="r-col">Colaborador</label><select class="input" id="r-col"><option value="">Selecione…</option>${ativos.map(c=>`<option value="${c.id}" ${R.colabId===c.id?'selected':''}>${esc(c.nome)} — ${esc(c.matricula||'s/ matrícula')}${c.ativo===false?' (inativo)':''}</option>`).join('')}</select></div>
+  <div style="display:flex;gap:8px;align-self:flex-end;flex-wrap:wrap"><button class="btn" data-action="dl-ficha" ${R.colabId?'':'disabled'}>${I.down} Ficha (HTML)</button><button class="btn btn-dark" data-action="print-ficha" ${R.colabId?'':'disabled'}>${I.print} Imprimir / PDF</button></div></div></div>
+  <div class="doc-preview" id="ficha-prev">${R.colabId?'<p style="color:#666">Carregando ficha…</p>':'<p style="color:#666;margin:0">Selecione um colaborador para ver a ficha.</p>'}</div>`;
+}
+async function loadEvid(colabId){
+  const nEnt=S.entregas.filter(e=>e.colaboradorId===colabId).length;const c=S.evCache[colabId];
+  if(c&&c.n===nEnt)return c.map;
+  const list=await Store.where('evidencias','colaboradorId',colabId);const map={};for(const v of list)map[v.entregaId]=v;
+  S.evCache[colabId]={n:nEnt,map};return map;
+}
+async function fichaFor(colabId){
+  const c=colabById(colabId);const ents=S.entregas.filter(e=>e.colaboradorId===colabId);
+  const ev=await loadEvid(colabId).catch(()=>({}));await resolveNames(ents.map(e=>e.registradoPor));return fichaHTML(c,ents,ev);
+}
+AFTER.relatorios=()=>{
+  const bind=(id,k)=>{const el=$('#'+id);if(el)el.addEventListener('change',()=>{R[k]=el.value;render(true);});};
+  bind('r-de','de');bind('r-ate','ate');bind('r-set','setor');bind('r-epi','epi');bind('r-col','colabId');
+  if(R.tab==='ind'&&R.colabId&&colabById(R.colabId)){const id=R.colabId;fichaFor(id).then(h=>{const el=$('#ficha-prev');if(el&&R.colabId===id)el.innerHTML=h;});}
+};
+function doPrint(inner){
+  $('#print-area').innerHTML=inner;document.body.classList.add('printing');
+  try{window.print();}catch(e){toast('A impressão não está disponível aqui. Baixe o relatório (HTML) e imprima pelo navegador.','warn');}
+  setTimeout(()=>{document.body.classList.remove('printing');},800);
+}
+function csvGeral(){
+  const d=geralData();const q=v=>{v=String(v??'');return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  const hdr=['Data','Hora','Colaborador','Matrícula','CPF','Setor','Função','EPI','CA','Quantidade','Motivo','Custo unitário','Custo total','Próxima troca','Confirmação','Observação'];
+  const lines=d.rows.map(({e,it})=>{const dt=new Date(e.data);return[dt.toLocaleDateString('pt-BR'),dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),e.colaboradorNome,e.matricula,e.cpf,e.setor,e.funcao,it.nome,it.ca,it.qtd,it.motivo,String((it.custoUnit||0).toFixed(2)).replace('.',','),String((it.qtd*(it.custoUnit||0)).toFixed(2)).replace('.',','),it.proximaTroca?fmtDate(it.proximaTroca):'',e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura',e.obs].map(q).join(';');});
+  return '\uFEFF'+[hdr.join(';'),...lines].join('\r\n');
+}
+
+/* ---------- Config ---------- */
+function vConfig(){
+  const c=cfg();
+  return head('Configurações','Dados que aparecem nas fichas e relatórios.')+
+  `<div class="grid g2"><form class="panel panel-pad" data-form="config"><div class="form">
+    <div class="field full"><label for="c-emp">Razão social</label><input class="input" id="c-emp" name="empresa" value="${esc(c.empresa)}"></div>
+    <div class="field"><label for="c-cnpj">CNPJ</label><input class="input" id="c-cnpj" name="cnpj" value="${esc(c.cnpj)}"></div>
+    <div class="field"><label for="c-uni">Unidade</label><input class="input" id="c-uni" name="unidade" value="${esc(c.unidade)}"></div>
+    <div class="field full"><label for="c-resp">Responsável pelas entregas (SESMT / almoxarifado)</label><input class="input" id="c-resp" name="responsavel" value="${esc(c.responsavel)}"></div>
+    <div class="field full"><label for="c-lim">Rigor do reconhecimento facial: <span id="c-lim-v" class="num">${String(c.limiar).replace('.',',')}</span></label><input type="range" id="c-lim" name="limiar" min="0.35" max="0.6" step="0.01" value="${c.limiar}" style="width:100%;accent-color:var(--brand)">
+    <div class="hint">Valores menores exigem mais semelhança (mais seguro, mas pode recusar a pessoa certa com pouca luz). O padrão 0,50 funciona bem na maioria dos casos.</div></div>
+  </div><div style="margin-top:16px"><button class="btn btn-primary" type="submit">Salvar configurações</button></div></form>
+  <div class="panel panel-pad"><h2 style="margin-bottom:8px">Dados e backup</h2>
+    <p class="muted" style="margin-top:0">${Store.mode==='supabase'?'Os dados ficam no banco Supabase da empresa e aparecem em qualquer computador, tablet ou celular que entre com um usuário cadastrado.':Store.mode==='cloud'?'Os dados ficam salvos na nuvem e aparecem em qualquer computador, tablet ou celular que abra este link com uma conta com acesso.':'Este navegador está em modo local: os dados ficam só neste dispositivo.'}</p>
+    <p class="small muted">${S.colabs.length} colaboradores · ${S.epis.length} EPIs · ${S.entregas.length} entregas</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-action="backup">${I.down} Baixar backup completo (JSON)</button><button class="btn" data-action="restore">Importar backup</button>${Store.mode==='supabase'?`<button class="btn" data-action="logout">Sair (${esc(Store.user.email)})</button>`:''}</div>
+    <input type="file" accept=".json,application/json" id="restore-file" hidden>
+    <h2 style="margin:22px 0 8px">Sobre a biometria</h2>
+    <p class="small muted" style="margin:0">O reconhecimento roda no próprio navegador. Só são guardados um código numérico do rosto e uma miniatura da foto, nunca vídeo. Pela LGPD, a biometria é dado sensível: colete a autorização por escrito e remova a biometria quando o colaborador pedir ou for desligado.</p></div></div>`;
+}
+AFTER.config=()=>{const r=$('#c-lim');if(r)r.addEventListener('input',()=>{$('#c-lim-v').textContent=String(r.value).replace('.',',');});};
+
+async function restoreBackup(file){
+  if(!file)return;let data;try{data=JSON.parse(await file.text());}catch(e){toast('Arquivo inválido. Use o backup .json gerado pelo sistema.','bad');return;}
+  const cols=[['colaboradores','colaboradores'],['epis','epis'],['entregas','entregas'],['evidencias','evidencias']];
+  const n=cols.reduce((a,[k])=>a+((data[k]||[]).length),0);
+  if(!n&&!data.config){toast('O arquivo não contém dados do Controle de EPI.','warn');return;}
+  if(!await askConfirm(`Importar ${(data.colaboradores||[]).length} colaboradores, ${(data.epis||[]).length} EPIs e ${(data.entregas||[]).length} entregas? Registros com o mesmo código serão substituídos.`,{ok:'Importar'}))return;
+  try{
+    toast('Importando…');
+    if(data.config&&Object.keys(data.config).length)await Store.set('config','app',data.config);
+    for(const [k,col] of cols){const rows=(data[k]||[]).filter(r=>r&&r.id);if(rows.length)await Store.bulk(col,rows);}
+    S.evCache={};toast('Backup importado.');render(true);
+  }catch(e){toast(errMsg(e),'bad');}
+}
+/* ---------- events ---------- */
+document.addEventListener('submit',e=>{
+  const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();
+  if(f.dataset.form==='colab')saveColab(f);
+  else if(f.dataset.form==='epi')saveEpi(f);
+  else if(f.dataset.form==='config'){const fd=new FormData(f);const data={empresa:String(fd.get('empresa')||'').trim(),cnpj:String(fd.get('cnpj')||'').trim(),unidade:String(fd.get('unidade')||'').trim(),responsavel:String(fd.get('responsavel')||'').trim(),limiar:Number(fd.get('limiar'))||0.5};
+    Store.set('config','app',data).then(()=>{toast('Configurações salvas.');document.activeElement&&document.activeElement.blur();render(true);}).catch(er=>toast(errMsg(er),'bad'));}
+});
+const ACT={
+  'new-colab':()=>colabForm(),
+  'edit-colab':el=>colabForm(colabById(el.dataset.id)),
+  'import-colabs':()=>importModal(),
+  'new-epi':()=>epiForm(),
+  'edit-epi':el=>{const p=epiById(el.dataset.id);if(p)epiForm(p);},
+  'stock-in':(el,e)=>{e.stopPropagation();const p=epiById(el.dataset.id);if(p)stockIn(p);},
+  'deliver-to':el=>startDelivery(el.dataset.id,el.dataset.epi),
+  'pick-colab':el=>{W.colabId=el.dataset.id;W.via='busca';W.itens={};const due=dueFor(W.colabId);for(const [eid,r] of Object.entries(due)){const p=epiById(eid);if(p&&p.ativo!==false&&r.dias!=null&&r.dias<=0)W.itens[eid]={qtd:1,motivo:'Troca periódica'};}W.step=2;render(true);window.scrollTo(0,0);},
+  'identify':async()=>{const r=await cameraModal({mode:'identify',title:'Identificar colaborador'});if(r&&r.colab){W.colabId=r.colab.id;W.via='facial';W.itens={};const due=dueFor(W.colabId);for(const [eid,x] of Object.entries(due)){const p=epiById(eid);if(p&&p.ativo!==false&&x.dias!=null&&x.dias<=0)W.itens[eid]={qtd:1,motivo:'Troca periódica'};}W.step=2;toast('Identificado: '+r.colab.nome);render(true);}},
+  'toggle-epi':el=>{const id=el.dataset.id;if(W.itens[id])delete W.itens[id];else{const d=dueFor(W.colabId)[id];W.itens[id]={qtd:1,motivo:d?(d.dias!=null&&d.dias<=0?'Troca periódica':'Desgaste ou dano'):'Admissão / primeira entrega'};}render(true);},
+  'wizard-back1':()=>{W=newWizard();render(true);},
+  'wizard-back2':()=>{W.step=2;W.valid=null;render(true);},
+  'wizard-to3':()=>wizardTo3(),
+  'wizard-reset':()=>{W=newWizard();render(true);},
+  'val-face':async()=>{const c=colabById(W.colabId);const r=await cameraModal({mode:'verify',colab:c,title:'Confirmar recebimento'});
+    if(!r)return;if(r.fallback){return ACT['val-sig']();}W.valid={metodo:'facial',distancia:r.distancia,foto:r.foto,dataHora:new Date().toISOString()};render(true);},
+  'val-sig':async()=>{const c=colabById(W.colabId);const r=await signatureModal(c);if(r){W.valid={metodo:'assinatura',assinatura:r.assinatura,dataHora:new Date().toISOString()};render(true);}},
+  'val-clear':()=>{W.valid=null;render(true);},
+  'save-delivery':()=>saveDelivery(),
+  'rtab':el=>{R.tab=el.dataset.tab;render(true);},
+  'ficha':(el,e)=>{e.preventDefault();R.tab='ind';R.colabId=el.dataset.id;if(location.hash==='#relatorios')render(true);else location.hash='#relatorios';},
+  'csv':()=>saveFile(`entregas-epi_${R.de}_a_${R.ate}.csv`,csvGeral()),
+  'dl-geral':()=>saveFile(`relatorio-epi_${R.de}_a_${R.ate}.html`,wrapDoc('Relatório de entrega de EPI',geralHTML(geralData()))),
+  'print-geral':()=>doPrint(geralHTML(geralData())),
+  'dl-ficha':async()=>{const c=colabById(R.colabId);if(!c)return;const h=await fichaFor(c.id);saveFile(`ficha-epi_${norm(c.nome).replace(/[^a-z0-9]+/g,'-')}.html`,wrapDoc('Ficha de EPI — '+c.nome,h));},
+  'print-ficha':async()=>{const c=colabById(R.colabId);if(!c)return;doPrint(await fichaFor(c.id));},
+  'logout':async(el,e)=>{e.preventDefault();if(Store.sb){await Store.sb.auth.signOut();location.reload();}},
+  'restore':()=>{const inp=$('#restore-file');inp.value='';inp.onchange=()=>restoreBackup(inp.files[0]);inp.click();},
+  'backup':async()=>{const ev=await Store.all('evidencias').catch(()=>[]);saveFile(`backup-controle-epi_${localISODate()}.json`,JSON.stringify({geradoEm:new Date().toISOString(),config:S.config,colaboradores:S.colabs,epis:S.epis,entregas:S.entregas,evidencias:ev},null,1));},
+};
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]');
+  if(a&&ACT[a.dataset.action]){if(a.tagName==='INPUT'&&a.type==='checkbox'){ACT[a.dataset.action](a,e);return;}if(a.disabled)return;ACT[a.dataset.action](a,e);return;}
+  const r=e.target.closest('tr[data-href]');if(r){location.hash=r.dataset.href;}
+});
+
+/* ---------- login (Supabase) ---------- */
+function showLogin(msg){
+  document.body.innerHTML=`<div class="login-wrap"><form class="panel login" id="login-form">
+    <div class="brandmark" style="padding:0;margin-bottom:18px"><div class="logo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M2 15h20v2H2z"/><path d="M12 7V4"/></svg></div><div><b style="color:var(--ink)">Controle de EPI</b><span>Entre com o seu e-mail e senha</span></div></div>
+    <div class="field"><label for="l-email">E-mail</label><input class="input" type="email" id="l-email" required autocomplete="username"></div>
+    <div class="field" style="margin-top:12px"><label for="l-pass">Senha</label><input class="input" type="password" id="l-pass" required autocomplete="current-password"></div>
+    <p class="small" id="l-msg" style="min-height:20px;color:var(--bad)">${esc(msg||'')}</p>
+    <button class="btn btn-primary btn-lg" style="width:100%" type="submit">Entrar</button>
+    <button class="btn" type="button" id="l-forgot" style="width:100%;margin-top:8px;border:0;background:none">Esqueci minha senha</button>
+  </form></div><div id="toast" role="status" aria-live="polite"></div>`;
+  const f=$('#login-form'),m=$('#l-msg');
+  f.onsubmit=async e=>{e.preventDefault();m.style.color='var(--muted)';m.textContent='Entrando…';
+    const {error}=await Store.sb.auth.signInWithPassword({email:$('#l-email').value.trim(),password:$('#l-pass').value});
+    if(error){m.style.color='var(--bad)';m.textContent=/invalid/i.test(error.message)?'E-mail ou senha incorretos.':error.message;return;}
+    location.reload();};
+  $('#l-forgot').onclick=async()=>{const email=$('#l-email').value.trim();if(!email){m.style.color='var(--bad)';m.textContent='Digite o seu e-mail acima e toque de novo em "Esqueci minha senha".';return;}
+    const {error}=await Store.sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+    m.style.color=error?'var(--bad)':'var(--ok)';m.textContent=error?error.message:'Enviamos um link para redefinir a senha. Confira o seu e-mail.';};
+}
+function newPasswordModal(){
+  const m=openModal(`<form id="np-form"><div class="modal-head"><h2>Definir nova senha</h2></div><div class="modal-body"><div class="field"><label for="np">Nova senha (mínimo 8 caracteres)</label><input class="input" type="password" id="np" minlength="8" required autocomplete="new-password"></div></div>
+    <div class="modal-foot"><button class="btn btn-primary" type="submit">Salvar senha</button></div></form>`);
+  $('#np-form',m).onsubmit=async e=>{e.preventDefault();const {error}=await Store.sb.auth.updateUser({password:$('#np',m).value});
+    if(error){toast(error.message,'bad');return;}closeModal(m,{silent:true});toast('Senha atualizada.');history.replaceState(null,'',location.pathname+'#painel');};
+}
+
+/* ---------- boot ---------- */
+(async function boot(){
+  renderNav();
+  await Store.init();
+  if(Store.mode==='supabase'){
+    Store.sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')setTimeout(newPasswordModal,300);});
+    if(/type=recovery/.test(location.hash)){const {data}=await Store.sb.auth.getSession();Store.user=data&&data.session?data.session.user:Store.user;}
+    if(!Store.user){showLogin();return;}
+    S.uid=Store.user.email;S.names[S.uid]=Store.user.email;
+    if(/type=recovery/.test(location.hash)||/access_token=/.test(location.hash))history.replaceState(null,'',location.pathname+'#painel');
+  }
+  try{if(Store.mode!=='supabase'&&window.claude&&window.claude.use){const u=await window.claude.use('user');if(u){S.userCap=u;try{S.uid=await u.id();}catch(e){}}}}catch(e){}
+  const mark=k=>{S.loaded[k]=true;};
+  Store.watch('colaboradores',rows=>{S.colabs=rows.sort(byName);mark('colaboradores');render();});
+  Store.watch('epis',rows=>{S.epis=rows;mark('epis');render();});
+  Store.watch('entregas',rows=>{S.entregas=rows.sort((a,b)=>a.data<b.data?1:-1);mark('entregas');render();});
+  Store.watch('config',rows=>{S.config=(rows.find(r=>r.id==='app'))||{};mark('config');render();});
+  renderNav();
+})();
+</script>
+</body>
+</html>
