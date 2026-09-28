@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Controle de EPI</title>
+<title>EPI Uai</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23F2B705%22/%3E%3Cpath%20d%3D%22M13%2041%20A19%2019%200%200%201%2051%2041%20Z%22%20fill%3D%22%231E1800%22/%3E%3Crect%20x%3D%2229%22%20y%3D%2221.5%22%20width%3D%226%22%20height%3D%2219.5%22%20rx%3D%222%22%20fill%3D%22%23F2B705%22/%3E%3Cpath%20d%3D%22M20.5%2041%20A12.5%2012.5%200%200%201%2024%2031.5%22%20fill%3D%22none%22%20stroke%3D%22%23F2B705%22%20stroke-width%3D%222.6%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M9%2041%20H53%20Q58%2041%2058%2045.5%20V46%20H11%20Q9%2046%209%2044%20Z%22%20fill%3D%22%231E1800%22/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0E4A57">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
@@ -55,9 +57,16 @@ button,input,select,textarea{font:inherit;color:inherit}
 .app{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100%}
 .side{background:var(--brand);color:var(--brand-ink);padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:22px}
 .brandmark{display:flex;align-items:center;gap:10px;padding:0 8px}
-.brandmark .logo{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);flex:none}
-.brandmark b{font-family:var(--display);font-size:18px;white-space:nowrap;font-weight:700;display:block;line-height:1.1}
-.brandmark span{font-size:12px;color:var(--brand-muted)}
+.brandmark .logo{width:36px;height:36px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);flex:none;overflow:hidden}
+.brandmark b em,.login .brandmark b em{font-style:normal;color:var(--accent)}
+.login .brandmark b em{color:#C99700}
+.brandmark b{font-family:var(--display);font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;display:block;line-height:1.1}
+.brandmark span{font-size:12px;color:var(--brand-muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brandmark .logo.img{background:#fff;padding:3px;width:40px;height:40px}
+.brandmark .logo.img img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.logo-drop{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px;border:1px dashed var(--line);border-radius:8px}
+.logo-drop .prev{width:150px;height:64px;background:#fff;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;color:#888;font-size:12px}
+.logo-drop .prev img{max-width:100%;max-height:100%;object-fit:contain}
 .nav{display:flex;flex-direction:column;gap:2px}
 .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--brand-ink);font-weight:500}
 .nav a svg{width:19px;height:19px;flex:none;opacity:.85}
@@ -123,7 +132,7 @@ main{padding:28px clamp(16px,3vw,40px) 48px;min-width:0}
 .kpi{padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);border-left:4px solid var(--line)}
 .kpi .v{font-family:var(--display);font-weight:600;font-size:32px;line-height:1.1;font-variant-numeric:tabular-nums}
 .kpi .l{font-size:13px;color:var(--muted)}
-.kpi .v.money{font-size:24px;padding:4px 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .v.money{font-size:clamp(17px,1.7vw,24px);padding:4px 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi.bad{border-left-color:var(--bad)} .kpi.bad .v{color:var(--bad)}
 .kpi.warn{border-left-color:var(--warn)} .kpi.warn .v{color:var(--warn)}
 .kpi.ok{border-left-color:var(--ok)}
@@ -246,6 +255,7 @@ table.t td.r,table.t th.r{text-align:right}
 /* Document (report) preview */
 .doc-preview{background:#fff;color:#1a1a1a;border-radius:var(--radius);border:1px solid var(--line);padding:28px;overflow-x:auto}
 #print-area{display:none}
+.demo-bar{background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:13.5px;text-align:center;padding:8px 14px;position:relative;z-index:30}
 .login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
 .login{width:min(400px,100%);padding:28px}
 .login .brandmark span{color:var(--muted)}
@@ -262,6 +272,12 @@ table.t td.r,table.t th.r{text-align:right}
 .doc-h{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid #0E4A57;padding-bottom:12px;margin-bottom:14px}
 .doc-k{font-size:12px;color:#0E4A57;font-weight:600}
 .doc-meta{text-align:right;font-size:12px;color:#444}
+.doc-brand{display:flex;gap:16px;align-items:center}
+.doc-list{padding-left:18px;margin:12px 0}.doc-list li{margin-bottom:7px}
+.doc-blank{display:inline-block;border-bottom:1px solid #555;height:1.1em;vertical-align:bottom}
+.doc-choice{display:flex;flex-direction:column;gap:6px;border:1px solid #cfd6d5;border-radius:6px;padding:10px 12px;margin-top:14px}
+.doc-sign.two{justify-content:space-between;gap:30px}.doc-sign.two div{flex:1;min-width:0}
+.doc-logo{max-width:150px;max-height:64px;object-fit:contain}
 .doc-photo{width:84px;height:84px;border-radius:6px;object-fit:cover;border:1px solid #ccc}
 .doc table{width:100%;border-collapse:collapse;margin:0 0 6px}
 .doc th,.doc td{border:1px solid #cfd6d5;padding:6px 8px;text-align:left;vertical-align:top}
@@ -288,8 +304,8 @@ table.t td.r,table.t th.r{text-align:right}
 <div class="app">
   <aside class="side">
     <div class="brandmark">
-      <div class="logo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M2 15h20v2H2z"/><path d="M12 7V4"/></svg></div>
-      <div><b>Controle de EPI</b><span id="company-name">Entregas e fichas NR-06</span></div>
+      <div class="logo" id="brand-logo"><svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#F2B705"/><path d="M13 41 A19 19 0 0 1 51 41 Z" fill="#1E1800"/><rect x="29" y="21.5" width="6" height="19.5" rx="2" fill="#F2B705"/><path d="M20.5 41 A12.5 12.5 0 0 1 24 31.5" fill="none" stroke="#F2B705" stroke-width="2.6" stroke-linecap="round"/><path d="M9 41 H53 Q58 41 58 45.5 V46 H11 Q9 46 9 44 Z" fill="#1E1800"/></svg></div>
+      <div style="min-width:0"><b id="brand-name">EPI <em>Uai</em></b><span id="company-name">Uso Assegurado e Identificado</span></div>
     </div>
     <nav class="nav" id="nav"></nav>
     <div class="side-foot" id="sync-state"><span class="dot"></span>Conectando…</div>
@@ -305,7 +321,7 @@ table.t td.r,table.t th.r{text-align:right}
 <script>
 'use strict';
 const FACEAPI_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.js';
-const DOC_CSS=".doc{font-family:Barlow,Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:12.5px;line-height:1.45;max-width:1000px;margin:0 auto}\n.doc h1{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:22px;margin:2px 0;font-weight:600;color:#111}\n.doc h2{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:15px;margin:20px 0 8px;font-weight:600;color:#111}\n.doc-h{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid #0E4A57;padding-bottom:12px;margin-bottom:14px}\n.doc-k{font-size:12px;color:#0E4A57;font-weight:600}\n.doc-meta{text-align:right;font-size:12px;color:#444}\n.doc-photo{width:84px;height:84px;border-radius:6px;object-fit:cover;border:1px solid #ccc}\n.doc table{width:100%;border-collapse:collapse;margin:0 0 6px}\n.doc th,.doc td{border:1px solid #cfd6d5;padding:6px 8px;text-align:left;vertical-align:top}\n.doc thead th{background:#eef2f1;font-weight:600;font-size:11.5px}\n.doc .r{text-align:right}\n.doc-id th{background:#eef2f1;width:14%;font-weight:600}\n.doc-termo{border-left:3px solid #F2B705;background:#fbf8ec;padding:8px 12px;margin:14px 0}\n.doc-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 4px}\n.doc-sum div{border:1px solid #cfd6d5;border-radius:6px;padding:8px 10px}\n.doc-sum b{display:block;font-size:18px;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif}\n.doc-sum span{color:#555;font-size:11.5px}\n.doc .proofc img{max-width:120px;max-height:80px;display:block;margin-bottom:4px;border-radius:4px;border:1px solid #ddd}\n.doc-sign{display:flex;justify-content:flex-end;margin-top:48px}\n.doc-sign div{border-top:1px solid #333;padding-top:6px;min-width:280px;text-align:center}\n.doc-sign span{font-size:11px;color:#555}\n.doc-f{margin-top:18px;font-size:11px;color:#777;border-top:1px solid #ddd;padding-top:6px}\n.doc tr{page-break-inside:avoid}\n.doc small{color:#666}\n@page{size:A4;margin:14mm}\n";
+const DOC_CSS=".doc{font-family:Barlow,Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:12.5px;line-height:1.45;max-width:1000px;margin:0 auto}\n.doc h1{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:22px;margin:2px 0;font-weight:600;color:#111}\n.doc h2{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:15px;margin:20px 0 8px;font-weight:600;color:#111}\n.doc-h{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid #0E4A57;padding-bottom:12px;margin-bottom:14px}\n.doc-k{font-size:12px;color:#0E4A57;font-weight:600}\n.doc-meta{text-align:right;font-size:12px;color:#444}\n.doc-brand{display:flex;gap:16px;align-items:center}\n.doc-list{padding-left:18px;margin:12px 0}.doc-list li{margin-bottom:7px}\n.doc-blank{display:inline-block;border-bottom:1px solid #555;height:1.1em;vertical-align:bottom}\n.doc-choice{display:flex;flex-direction:column;gap:6px;border:1px solid #cfd6d5;border-radius:6px;padding:10px 12px;margin-top:14px}\n.doc-sign.two{justify-content:space-between;gap:30px}.doc-sign.two div{flex:1;min-width:0}\n.doc-logo{max-width:150px;max-height:64px;object-fit:contain}\n.doc-photo{width:84px;height:84px;border-radius:6px;object-fit:cover;border:1px solid #ccc}\n.doc table{width:100%;border-collapse:collapse;margin:0 0 6px}\n.doc th,.doc td{border:1px solid #cfd6d5;padding:6px 8px;text-align:left;vertical-align:top}\n.doc thead th{background:#eef2f1;font-weight:600;font-size:11.5px}\n.doc .r{text-align:right}\n.doc-id th{background:#eef2f1;width:14%;font-weight:600}\n.doc-termo{border-left:3px solid #F2B705;background:#fbf8ec;padding:8px 12px;margin:14px 0}\n.doc-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 4px}\n.doc-sum div{border:1px solid #cfd6d5;border-radius:6px;padding:8px 10px}\n.doc-sum b{display:block;font-size:18px;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif}\n.doc-sum span{color:#555;font-size:11.5px}\n.doc .proofc img{max-width:120px;max-height:80px;display:block;margin-bottom:4px;border-radius:4px;border:1px solid #ddd}\n.doc-sign{display:flex;justify-content:flex-end;margin-top:48px}\n.doc-sign div{border-top:1px solid #333;padding-top:6px;min-width:280px;text-align:center}\n.doc-sign span{font-size:11px;color:#555}\n.doc-f{margin-top:18px;font-size:11px;color:#777;border-top:1px solid #ddd;padding-top:6px}\n.doc tr{page-break-inside:avoid}\n.doc small{color:#666}\n@page{size:A4;margin:14mm}\n";
 
 /* ---------- utils ---------- */
 const $=(s,r=document)=>r.querySelector(s);
@@ -371,6 +387,7 @@ function askConfirm(msg,{ok='Confirmar',danger=false}={}){
 }
 
 /* ---------- storage (shared db, with local fallback) ---------- */
+const DEMO=!!window.EPI_DEMO;const LS_PREFIX=DEMO?'epidemo:':'epi:';
 const Store={
   mode:'local',db:null,sb:null,user:null,subs:{},maps:{},emit:{},ready:false,
   async init(){
@@ -421,9 +438,9 @@ const Store={
     (this.subs[col]=this.subs[col]||[]).push(cb);cb(this._all(col));return()=>{};
   },
   _local(col,id,data){const m=this.maps[col];if(m){m.set(id,{id,...data});this.emit[col]();}},
-  _read(col){try{return JSON.parse(localStorage.getItem('epi:'+col)||'{}')}catch(e){return{}}},
+  _read(col){try{return JSON.parse(localStorage.getItem(LS_PREFIX+col)||'{}')}catch(e){return{}}},
   _all(col){return Object.entries(this._read(col)).map(([id,v])=>({id,...v}))},
-  _write(col,obj){try{localStorage.setItem('epi:'+col,JSON.stringify(obj))}catch(e){toast('O armazenamento deste navegador está cheio.','bad');throw e}
+  _write(col,obj){try{localStorage.setItem(LS_PREFIX+col,JSON.stringify(obj))}catch(e){toast('O armazenamento deste navegador está cheio.','bad');throw e}
     (this.subs[col]||[]).forEach(cb=>cb(this._all(col)));},
   clean(o){const{id,...rest}=o;return JSON.parse(JSON.stringify(rest));},
   async set(col,id,data){
@@ -458,6 +475,29 @@ const Store={
     }
     for(const r of rows)await this.set(col,r.id,r);
   },
+  async insert(col,id,data){
+    if(this.mode==='supabase'){
+      data=this.clean(data);const {error}=await this.sb.from('docs').insert({col,id,data,updated_at:new Date().toISOString()});
+      if(error)throw error;this._local(col,id,data);return;
+    }
+    return this.set(col,id,data);
+  },
+  async baixarEstoque(epiId,qtd){
+    if(this.mode==='supabase'){
+      const {error}=await this.sb.rpc('baixar_estoque',{p_epi:epiId,p_qtd:qtd});
+      if(!error){const m=this.maps.epis;if(m&&m.get(epiId)){const d=m.get(epiId);d.estoque=Number(d.estoque||0)-qtd;this.emit.epis();}return;}
+      if(!/baixar_estoque|function|PGRST202/i.test((error.message||'')+(error.code||'')))throw error;
+    }
+    const p=epiById(epiId);if(p)await this.update('epis',epiId,{estoque:Number(p.estoque||0)-qtd});
+  },
+  async perfil(){
+    if(this.mode!=='supabase')return{papel:'admin'};
+    const {data,error}=await this.sb.from('perfis').select('papel,nome').eq('user_id',this.user.id).maybeSingle();
+    if(error){if(/perfis|PGRST205|42P01/i.test((error.message||'')+(error.code||'')))return{papel:'admin',legado:true};throw error;}
+    return data||{papel:'operador'};
+  },
+  async perfis(){const {data,error}=await this.sb.from('perfis').select('user_id,email,nome,papel,criado_em').order('email');if(error)throw error;return data;},
+  async setPapel(uid,papel){const {error}=await this.sb.from('perfis').update({papel}).eq('user_id',uid);if(error)throw error;},
   async where(col,field,val){
     if(this.mode==='supabase')return this._fetchAll(col,q=>q.eq('data->>'+field,val));
     if(this.mode==='cloud'){const s=await retry(()=>this.db.collection(col).where(field,'==',val).get());return s.docs.map(d=>({id:d.id,...d.data()}));}
@@ -475,7 +515,7 @@ function errMsg(e){
   if(c==='quota_exceeded')return 'O limite de registros deste sistema foi atingido. Exporte um backup e remova registros antigos.';
   if(c==='invalid_argument')return 'Você não tem permissão para alterar dados aqui, ou o registro ficou grande demais.';
   if(c==='resource_exhausted')return 'Muitas operações seguidas. Aguarde alguns segundos e tente de novo.';
-  if(e&&e.message&&Store.mode==='supabase')return /row-level security|JWT|permission/i.test(e.message)?'Sua sessão expirou ou você não tem permissão. Saia e entre de novo.':'Não foi possível salvar: '+e.message;
+  if(e&&e.message&&Store.mode==='supabase')return /row-level security|permission/i.test(e.message)?'Seu perfil não tem permissão para esta ação. Fale com um administrador.':/JWT/i.test(e.message)?'Sua sessão expirou. Saia e entre de novo.':'Não foi possível salvar: '+e.message;
   return 'Não foi possível salvar'+(c?' ('+c+')':'')+'. Tente novamente.';
 }
 async function saveFile(filename,data){
@@ -486,14 +526,23 @@ async function saveFile(filename,data){
 
 /* ---------- state ---------- */
 const S={colabs:[],epis:[],entregas:[],config:{},loaded:{colaboradores:false,epis:false,entregas:false,config:false},uid:null,userCap:null,names:{},evCache:{}};
-const DEFAULT_CFG={empresa:'',cnpj:'',unidade:'',responsavel:'',limiar:0.5};
+const DEFAULT_CFG={empresa:'',nomeCurto:'',cnpj:'',unidade:'',responsavel:'',cargoResponsavel:'',logo:'',limiar:0.5};
+const BRAND=(()=>{const p=(window.EPI_CONFIG&&window.EPI_CONFIG.produto)||{};return{nome:p.nome||'EPI Uai',sub:p.subtitulo||'Uso Assegurado e Identificado',fornecedor:p.fornecedor||'',contato:p.contatoSuporte||''};})();
+const brandHTML=()=>esc(BRAND.nome).replace(/(Uai)$/i,'<em>$1</em>');
+const fmtCNPJ=v=>{const d=String(v||'').replace(/\D/g,'').slice(0,14);return d.replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d)/,'$1-$2');};
+function cnpjValido(v){const c=String(v||'').replace(/\D/g,'');if(c.length!==14||/^(\d)\1+$/.test(c))return false;
+  const calc=n=>{let s=0,pos=n-7;for(let i=n;i>=1;i--){s+=c[n-i]*pos--;if(pos<2)pos=9;}const r=s%11;return r<2?0:11-r;};
+  return calc(12)==c[12]&&calc(13)==c[13];}
+const empresaOk=()=>!!cfg().empresa;
+const isAdmin=()=>S.papel!=='operador';
+const ADMIN_ACTS=new Set(['new-colab','edit-colab','import-colabs','new-epi','edit-epi','stock-in','backup','restore']);
 const cfg=()=>({...DEFAULT_CFG,...S.config});
 const colabById=id=>S.colabs.find(c=>c.id===id);
 const epiById=id=>S.epis.find(p=>p.id===id);
 const enrolled=()=>S.colabs.filter(c=>c.ativo!==false&&Array.isArray(c.faceDescriptors)&&c.faceDescriptors.length);
 function caStatus(p){
   if(!p.validadeCA)return null;const d=daysUntil(p.validadeCA);
-  if(d<0)return{level:'bad',text:'CA vencido'};if(d<=30)return{level:'warn',text:'CA vence em '+d+'d'};return{level:'ok',text:'CA válido'};
+  if(d<0)return{level:'bad',text:'CA vencido'};if(d===0)return{level:'warn',text:'CA vence hoje'};if(d<=30)return{level:'warn',text:'CA vence em '+d+'d'};return{level:'ok',text:'CA válido'};
 }
 function lastByColabEpi(){
   const last={};
@@ -763,9 +812,12 @@ const NAV=[['painel','Painel','Painel',I.panel],['entrega','Nova entrega','Entre
 function renderNav(){
   const r=route().name;const cur=r==='colaborador'?'colaboradores':r;
   $('#nav').innerHTML=NAV.map(([k,l,s,ic,cls])=>`<a href="#${k}" class="${cls||''} ${cur===k?'active':''}">${ic}<span class="lbl-long">${l}</span><span class="lbl-short">${s}</span></a>`).join('');
-  const c=cfg();$('#company-name').textContent=c.empresa||'Entregas e fichas NR-06';
+  const c=cfg();$('#brand-name').innerHTML=brandHTML();$('#company-name').textContent=c.nomeCurto||c.empresa||BRAND.sub;
+  const lg=$('#brand-logo');if(!lg.dataset.orig)lg.dataset.orig=lg.innerHTML;const want=c.logo||'';
+  if(lg.dataset.cur!==want){lg.dataset.cur=want;lg.classList.toggle('img',!!want);lg.innerHTML=want?`<img src="${esc(want)}" alt="">`:lg.dataset.orig;}
+  document.title=BRAND.nome+(c.nomeCurto||c.empresa?' · '+(c.nomeCurto||c.empresa):'');
   const st=$('#sync-state');if(!Store.ready)return;
-  st.innerHTML=Store.mode==='supabase'?`<span class="dot on"></span>${esc(Store.user?Store.user.email:'')}<br><a href="#" data-action="logout" style="color:var(--brand-ink)">Sair</a>`:Store.mode==='cloud'?'<span class="dot on"></span>Dados sincronizados':'<span class="dot"></span>Modo local (só este navegador)';
+  st.innerHTML=Store.mode==='supabase'?`<span class="dot on"></span>${esc(Store.user?Store.user.email:'')}<br>${isAdmin()?'Administrador':'Operador'} · <a href="#" data-action="logout" style="color:var(--brand-ink)">Sair</a>`:Store.mode==='cloud'?'<span class="dot on"></span>Dados sincronizados':DEMO?'<span class="dot on"></span>Demonstração':'<span class="dot"></span>Modo local (só este navegador)';
 }
 function render(force){
   if(!force&&(isEditing())){pendingRender=true;return;}
@@ -785,7 +837,7 @@ function head(title,sub,actions=''){return`<div class="page-head"><div><h1>${tit
 function vPainel(){
   if(!S.colabs.length&&!S.epis.length){
     return head('Painel','Visão geral das entregas de EPI.')+`<div class="panel"><div class="empty"><h3>Comece pelos cadastros</h3><p>Cadastre os EPIs que a empresa fornece e os colaboradores que vão recebê-los. Depois é só registrar as entregas.</p>
-    <div class="actions"><button class="btn btn-primary" data-action="new-epi">${I.helmet} Cadastrar EPI</button><button class="btn" data-action="new-colab">${I.people} Cadastrar colaborador</button><button class="btn" data-action="import-colabs">Importar planilha</button></div></div></div>`;
+    ${isAdmin()?`<div class="actions"><button class="btn btn-primary" data-action="new-epi">${I.helmet} Cadastrar EPI</button><button class="btn" data-action="new-colab">${I.people} Cadastrar colaborador</button><button class="btn" data-action="import-colabs">Importar planilha</button></div>`:'<p><b>Peça a um administrador para cadastrar os EPIs e colaboradores.</b></p>'}</div></div>`;
   }
   const now=new Date();const mesIni=new Date(now.getFullYear(),now.getMonth(),1).toISOString();
   const entMes=S.entregas.filter(e=>e.data>=mesIni);
@@ -812,6 +864,7 @@ function vPainel(){
     <div class="kpi ${low.length?'warn':''}"><div class="v">${low.length}</div><div class="l">EPIs com estoque baixo</div></div>
     <div class="kpi ${caBad.some(p=>caStatus(p).level==='bad')?'bad':caBad.length?'warn':''}"><div class="v">${caBad.length}</div><div class="l">CA vencido ou a vencer</div></div>
   </div>
+  ${empresaOk()?'':`<div class="notice">Os dados da empresa ainda não foram preenchidos, e as fichas saem sem razão social e CNPJ. <a href="#config"><b>Preencher em Configurações</b></a></div>`}
   ${semBio?`<div class="notice info">${semBio} colaborador${semBio>1?'es ainda não têm':' ainda não tem'} biometria facial cadastrada. Sem ela, a entrega é confirmada por assinatura na tela.</div>`:''}
   <div class="grid g2">
     <div class="panel"><div class="panel-head"><h2>Itens entregues nos últimos 6 meses</h2></div><div class="panel-pad chart">${chart}</div></div>
@@ -837,7 +890,7 @@ function vColabs(){
       <td>${esc(c.funcao||'—')}</td><td>${esc(c.setor||'—')}</td>
       <td>${c.ativo===false?'<span class="chip">Inativo</span>':bio?'<span class="chip ok">Biometria ok</span>':'<span class="chip warn">Sem biometria</span>'}</td>
       <td>${last[c.id]?fmtDate(last[c.id]):'<span class="muted">Nunca</span>'}</td></tr>`;}).join('');
-  return head('Colaboradores',`${S.colabs.filter(c=>c.ativo!==false).length} ativos`,`<button class="btn" data-action="import-colabs">Importar planilha</button><button class="btn btn-primary" data-action="new-colab">${I.plus} Novo colaborador</button>`)+
+  return head('Colaboradores',`${S.colabs.filter(c=>c.ativo!==false).length} ativos`,isAdmin()?`<button class="btn" data-action="import-colabs">Importar planilha</button><button class="btn btn-primary" data-action="new-colab">${I.plus} Novo colaborador</button>`:'')+
   `<div class="panel"><div class="toolbar"><div class="search">${I.search}<input class="input" id="q-colab" placeholder="Buscar por nome, matrícula, função ou CPF" autocomplete="off"></div>
    <select class="input" id="f-setor" style="width:auto;min-width:170px"><option value="">Todos os setores</option>${setores.map(s=>`<option>${esc(s)}</option>`).join('')}</select>
    <label class="check small" style="align-items:center"><input type="checkbox" id="f-inativos"> Mostrar inativos</label></div>
@@ -857,7 +910,7 @@ function vColab(id){
   const bio=(c.faceDescriptors||[]).length;
   return `<div class="page-head"><div class="person">${avatar(c,true)}<div><h1>${esc(c.nome)}</h1><p>${esc([c.funcao,c.setor,c.unidade].filter(Boolean).join(' · ')||'Sem função/setor')} · Matrícula ${esc(c.matricula||'—')}</p>
     <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">${c.ativo===false?'<span class="chip">Inativo</span>':''}${bio?'<span class="chip ok">Biometria facial cadastrada</span>':'<span class="chip warn">Sem biometria</span>'}</div></div></div>
-    <div class="actions"><button class="btn" data-action="edit-colab" data-id="${c.id}">Editar</button><a class="btn" href="#relatorios" data-action="ficha" data-id="${c.id}">${I.report} Ficha de EPI</a>${c.ativo!==false?`<button class="btn btn-primary" data-action="deliver-to" data-id="${c.id}">${I.plus} Nova entrega</button>`:''}</div></div>
+    <div class="actions">${isAdmin()?`<button class="btn" data-action="edit-colab" data-id="${c.id}">Editar</button>`:''}<button class="btn" data-action="termo" data-id="${c.id}">Termo LGPD</button><a class="btn" href="#relatorios" data-action="ficha" data-id="${c.id}">${I.report} Ficha de EPI</a>${c.ativo!==false?`<button class="btn btn-primary" data-action="deliver-to" data-id="${c.id}">${I.plus} Nova entrega</button>`:''}</div></div>
   <div class="grid g2">
     <div class="panel"><div class="panel-head"><h2>EPIs em uso</h2></div>${emUso.length?`<div class="table-wrap"><table class="t"><thead><tr><th>EPI</th><th>Recebido em</th><th>Próxima troca</th></tr></thead><tbody>${emUso.map(x=>`<tr><td><b>${esc(x.p.nome)}</b><div class="small muted">CA ${esc(x.p.ca||'—')}</div></td><td>${fmtDate(x.ultima)}</td><td>${x.vence?`<span class="chip ${x.dias<0?'bad':x.dias<=7?'warn':'ok'}">${fmtDate(x.vence)}</span>`:'<span class="muted small">Sem prazo</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Nenhum EPI entregue ainda.</div>'}</div>
     <div class="panel panel-pad"><h2 style="margin-bottom:12px">Dados</h2><dl style="display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0">
@@ -883,9 +936,9 @@ function colabForm(c){
     <div class="field"><label for="f-uni">Unidade</label><input class="input" id="f-uni" name="unidade" value="${esc(c.unidade||cfg().unidade||'')}"></div>
     <div class="field"><label for="f-adm">Admissão</label><input class="input" type="date" id="f-adm" name="admissao" value="${esc(c.admissao||'')}"></div>
     <div class="section-title">Biometria facial</div>
-    <label class="check full"><input type="checkbox" name="consent" id="f-consent" ${c.consentimentoEm?'checked':''}><span>O colaborador autorizou, por escrito, o uso da sua imagem facial para confirmar o recebimento de EPIs (dado biométrico, LGPD art. 11).</span></label>
+    <label class="check full"><input type="checkbox" name="consent" id="f-consent" ${c.consentimentoEm?'checked':''}><span>O colaborador assinou o termo de consentimento para uso da biometria facial (LGPD art. 11). O termo pode ser impresso na página do colaborador, no botão Termo LGPD.</span></label>
     <div class="full" id="bio-box"></div>
-    ${c.id?`<label class="check full"><input type="checkbox" name="ativo" ${c.ativo===false?'':'checked'}><span>Colaborador ativo</span></label>`:''}
+    ${c.id?`<label class="check full"><input type="checkbox" name="ativo" ${c.ativo===false?'':'checked'}><span>Colaborador ativo <span class="small muted">(ao desativar, a biometria é apagada)</span></span></label>`:''}
   </div></div>
   <div class="modal-foot"><button type="button" class="btn" data-close>Cancelar</button><button class="btn btn-primary" type="submit">Salvar colaborador</button></div></form>`,{wide:true});
   $$('[data-close]',m).forEach(b=>b.onclick=()=>closeModal(m));
@@ -895,7 +948,7 @@ function colabForm(c){
       <div style="flex:1;min-width:180px"><b>${n?'Rosto cadastrado':'Rosto não cadastrado'}</b><div class="small muted">${n?n+' amostras salvas. Recadastre se a aparência mudar muito.':consent?'Abra a câmera e capture 3 amostras.':'Marque a autorização acima para cadastrar.'}</div></div>
       <button type="button" class="btn ${n?'':'btn-dark'}" data-bio ${consent?'':'disabled'}>${I.face} ${n?'Recadastrar rosto':'Cadastrar rosto'}</button>${n?'<button type="button" class="btn btn-danger" data-bio-del>Remover biometria</button>':''}</div>`;
     const b=$('[data-bio]',bioBox);b.onclick=async()=>{const r=await cameraModal({mode:'enroll',colab:c,title:'Cadastrar rosto'});if(r){F.descriptors=r.descriptors;F.foto=r.foto;F.consentimentoEm=F.consentimentoEm||new Date().toISOString();F.changedBio=true;paint();}};
-    const d=$('[data-bio-del]',bioBox);if(d)d.onclick=()=>{F.descriptors=null;F.changedBio=true;paint();};
+    const d=$('[data-bio-del]',bioBox);if(d)d.onclick=()=>{F.descriptors=null;F.foto=null;F.changedBio=true;paint();};
   };
   $('#f-consent',m).addEventListener('change',e=>{if(!e.target.checked){F.descriptors=null;F.consentimentoEm=null;}paint();});paint();
 }
@@ -907,6 +960,7 @@ async function saveColab(form){
   const data={...old,nome:String(fd.get('nome')).trim(),matricula,cpf:String(fd.get('cpf')||'').trim(),funcao:String(fd.get('funcao')||'').trim(),setor:String(fd.get('setor')||'').trim(),unidade:String(fd.get('unidade')||'').trim(),admissao:fd.get('admissao')||'',
     ativo:form.dataset.id?!!fd.get('ativo'):true,foto:F.foto||null,faceDescriptors:consent?(F.descriptors||null):null,consentimentoEm:consent?(F.consentimentoEm||new Date().toISOString()):null,atualizadoEm:new Date().toISOString(),criadoEm:old.criadoEm||new Date().toISOString()};
   if(!consent){data.faceDescriptors=null;}
+  if(data.ativo===false&&(data.faceDescriptors||data.foto)){data.faceDescriptors=null;data.foto=null;data.consentimentoEm=null;toast('Colaborador desativado: a biometria foi removida (LGPD).');}
   try{await Store.set('colaboradores',id,data);closeModal(form,{silent:true});toast('Colaborador salvo.');if(!form.dataset.id)location.hash='#colaborador/'+encodeURIComponent(id);else render(true);}
   catch(e){toast(errMsg(e),'bad');}
 }
@@ -942,8 +996,8 @@ function vEpis(){
     <td>${Number(p.periodicidadeDias)?p.periodicidadeDias+' dias':'<span class="muted">—</span>'}</td>
     <td class="r num">${Number(p.estoque||0)} ${low&&p.ativo!==false?'<span class="chip warn">Baixo</span>':''}</td>
     <td class="r num">${money(p.custoUnit)}</td>
-    <td class="r"><button class="btn" data-action="stock-in" data-id="${p.id}">+ Estoque</button></td></tr>`;}).join('');
-  return head('EPIs','Catálogo com CA, periodicidade de troca e estoque.',`<button class="btn btn-primary" data-action="new-epi">${I.plus} Novo EPI</button>`)+
+    <td class="r">${isAdmin()?`<button class="btn" data-action="stock-in" data-id="${p.id}">+ Estoque</button>`:''}</td></tr>`;}).join('');
+  return head('EPIs','Catálogo com CA, periodicidade de troca e estoque.',isAdmin()?`<button class="btn btn-primary" data-action="new-epi">${I.plus} Novo EPI</button>`:'')+
   `<div class="panel"><div class="toolbar"><div class="search">${I.search}<input class="input" id="q-epi" placeholder="Buscar por nome, CA ou fabricante" autocomplete="off"></div><label class="check small" style="align-items:center"><input type="checkbox" id="f-epi-ina"> Mostrar inativos</label></div>
   ${S.epis.length?`<div class="table-wrap"><table class="t" id="t-epis"><thead><tr><th>EPI</th><th>CA</th><th>Troca</th><th class="r">Estoque</th><th class="r">Custo unit.</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
   :`<div class="empty"><h3>Nenhum EPI cadastrado</h3><p>Cadastre luvas, botas, protetores auriculares, aventais e os demais itens que a empresa fornece.</p><div class="actions"><button class="btn btn-primary" data-action="new-epi">${I.plus} Novo EPI</button></div></div>`}</div>`;
@@ -1058,9 +1112,9 @@ async function saveDelivery(){
   const entrega={colaboradorId:c.id,colaboradorNome:c.nome,matricula:c.matricula||'',cpf:c.cpf||'',setor:c.setor||'',funcao:c.funcao||'',data:now,itens,obs:W.obs||'',
     validacao:{metodo:W.valid.metodo,distancia:W.valid.distancia??null,dataHora:W.valid.dataHora},registradoPor:S.uid||null};
   try{
-    await Store.set('evidencias',id,{colaboradorId:c.id,entregaId:id,metodo:W.valid.metodo,foto:W.valid.foto||null,assinatura:W.valid.assinatura||null,dataHora:W.valid.dataHora});
-    await Store.set('entregas',id,entrega);
-    for(const it of itens){const p=epiById(it.epiId);if(p)await Store.update('epis',p.id,{estoque:Number(p.estoque||0)-it.qtd});}
+    await Store.insert('evidencias',id,{colaboradorId:c.id,entregaId:id,metodo:W.valid.metodo,foto:W.valid.foto||null,assinatura:W.valid.assinatura||null,dataHora:W.valid.dataHora});
+    await Store.insert('entregas',id,entrega);
+    for(const it of itens){try{await Store.baixarEstoque(it.epiId,it.qtd);}catch(e){console.error(e);toast('Entrega registrada, mas não foi possível baixar o estoque de '+it.nome+'.','warn');}}
     delete S.evCache[c.id];
     W.done={colabId:c.id,n:sum(itens.map(i=>i.qtd)),data:now};
   }catch(e){toast(errMsg(e),'bad');}
@@ -1084,24 +1138,24 @@ function geralData(){
 }
 function geralHTML(d){
   const c=cfg();
-  return`<div class="doc"><header class="doc-h"><div><div class="doc-k">Relatório geral de entrega de EPI</div><h1>${esc(c.empresa||'Empresa')}</h1><div>${esc([c.cnpj&&'CNPJ '+c.cnpj,c.unidade].filter(Boolean).join(' · '))}</div></div>
+  const K=c;return`<div class="doc"><header class="doc-h"><div class="doc-brand">${K.logo?`<img class="doc-logo" src="${esc(K.logo)}" alt="">`:''}<div><div class="doc-k">Relatório geral de entrega de EPI</div><h1>${esc(c.empresa||'[Preencha a razão social em Configurações]')}</h1><div>${esc([c.cnpj&&'CNPJ '+c.cnpj,c.unidade].filter(Boolean).join(' · '))}</div></div></div>
   <div class="doc-meta">Período: ${fmtDate(R.de)} a ${fmtDate(R.ate)}${R.setor?'<br>Setor: '+esc(R.setor):''}${R.epi&&epiById(R.epi)?'<br>EPI: '+esc(epiById(R.epi).nome):''}</div></header>
   <div class="doc-sum"><div><b>${d.ents.length}</b><span>entregas</span></div><div><b>${d.total}</b><span>itens</span></div><div><b>${d.pessoas}</b><span>colaboradores</span></div><div><b>${money(d.custo)}</b><span>custo total</span></div></div>
   <h2>Por EPI</h2><table><thead><tr><th>EPI</th><th>CA</th><th class="r">Quantidade</th><th class="r">Custo</th></tr></thead><tbody>${d.porEpi.map(x=>`<tr><td>${esc(x.nome)}</td><td>${esc(x.ca||'—')}</td><td class="r">${x.qtd}</td><td class="r">${money(x.custo)}</td></tr>`).join('')||'<tr><td colspan="4">Sem entregas no período.</td></tr>'}</tbody></table>
   <h2>Por setor</h2><table><thead><tr><th>Setor</th><th class="r">Colaboradores</th><th class="r">Itens</th><th class="r">Custo</th></tr></thead><tbody>${d.porSetor.map(([s,x])=>`<tr><td>${esc(s)}</td><td class="r">${x.pessoas.size}</td><td class="r">${x.qtd}</td><td class="r">${money(x.custo)}</td></tr>`).join('')||'<tr><td colspan="4">—</td></tr>'}</tbody></table>
   <h2>Entregas detalhadas</h2><table><thead><tr><th>Data</th><th>Colaborador</th><th>Setor</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>Confirmação</th></tr></thead><tbody>${d.rows.map(({e,it})=>`<tr><td>${fmtDT(e.data)}</td><td>${esc(e.colaboradorNome)}<br><small>Mat. ${esc(e.matricula||'—')}</small></td><td>${esc(e.setor||'—')}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${e.validacao&&e.validacao.metodo==='facial'?'Facial':'Assinatura'}</td></tr>`).join('')||'<tr><td colspan="8">Sem entregas no período.</td></tr>'}</tbody></table>
-  <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())}</footer></div>`;
+  <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())} · ${esc(BRAND.nome)}${BRAND.fornecedor?' · '+esc(BRAND.fornecedor):''}</footer></div>`;
 }
 function fichaHTML(c,ents,ev){
   const k=cfg();
   const rows=ents.slice().sort((a,b)=>a.data<b.data?-1:1).map(e=>{const v=ev[e.id]||{};const img=v.foto||v.assinatura;
     return (e.itens||[]).map((it,i)=>`<tr><td>${i===0?fmtDT(e.data):''}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${it.proximaTroca?fmtDate(it.proximaTroca):'—'}</td>${i===0?`<td rowspan="${e.itens.length}" class="proofc">${img?`<img src="${esc(img)}" alt="">`:''}<div>${e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura na tela'}${e.registradoPor&&S.names[e.registradoPor]?'<br><small>Registrado por '+esc(S.names[e.registradoPor])+'</small>':''}</div></td>`:''}</tr>`).join('');}).join('');
-  return`<div class="doc"><header class="doc-h"><div><div class="doc-k">Ficha de controle de entrega de EPI · NR-06</div><h1>${esc(k.empresa||'Empresa')}</h1><div>${esc([k.cnpj&&'CNPJ '+k.cnpj,k.unidade].filter(Boolean).join(' · '))}</div></div>${c.foto?`<img class="doc-photo" src="${esc(c.foto)}" alt="">`:''}</header>
+  const K=k;return`<div class="doc"><header class="doc-h"><div class="doc-brand">${K.logo?`<img class="doc-logo" src="${esc(K.logo)}" alt="">`:''}<div><div class="doc-k">Ficha de controle de entrega de EPI · NR-06</div><h1>${esc(k.empresa||'[Preencha a razão social em Configurações]')}</h1><div>${esc([k.cnpj&&'CNPJ '+k.cnpj,k.unidade].filter(Boolean).join(' · '))}</div></div></div>${c.foto?`<img class="doc-photo" src="${esc(c.foto)}" alt="">`:''}</header>
   <table class="doc-id"><tr><th>Colaborador</th><td>${esc(c.nome)}</td><th>Matrícula</th><td>${esc(c.matricula||'—')}</td></tr><tr><th>CPF</th><td>${esc(c.cpf||'—')}</td><th>Admissão</th><td>${fmtDate(c.admissao)}</td></tr><tr><th>Função</th><td>${esc(c.funcao||'—')}</td><th>Setor</th><td>${esc(c.setor||'—')}</td></tr></table>
   <p class="doc-termo"><b>Termo de responsabilidade.</b> ${esc(TERMO)}</p>
   <table><thead><tr><th>Data</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>Próx. troca</th><th>Confirmação do colaborador</th></tr></thead><tbody>${rows||'<tr><td colspan="7">Nenhuma entrega registrada.</td></tr>'}</tbody></table>
-  <div class="doc-sign"><div>${esc(k.responsavel||'')}<br><span>Responsável pela entrega / SESMT</span></div></div>
-  <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())} · ${ents.length} entrega(s) registradas</footer></div>`;
+  <div class="doc-sign"><div>${esc(k.responsavel||'')}<br><span>${esc(k.cargoResponsavel||'Responsável pela entrega / SESMT')}</span></div></div>
+  <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())} · ${ents.length} entrega(s) registrada(s) · ${esc(BRAND.nome)}${BRAND.fornecedor?' · '+esc(BRAND.fornecedor):''}</footer></div>`;
 }
 function wrapDoc(title,inner){return`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)}</title><style>${DOC_CSS}body{margin:0;padding:24px;background:#fff}@media print{body{padding:0}}</style></head><body>${inner}</body></html>`;}
 function vRelatorios(){
@@ -1116,13 +1170,13 @@ function vRelatorios(){
       <div class="field"><label for="r-set">Setor</label><select class="input" id="r-set"><option value="">Todos</option>${setores.map(s=>`<option ${R.setor===s?'selected':''}>${esc(s)}</option>`).join('')}</select></div>
       <div class="field"><label for="r-epi">EPI</label><select class="input" id="r-epi"><option value="">Todos</option>${S.epis.slice().sort(byName).map(p=>`<option value="${p.id}" ${R.epi===p.id?'selected':''}>${esc(p.nome)}</option>`).join('')}</select></div>
       <div style="margin-left:auto;display:flex;gap:8px;align-self:flex-end;flex-wrap:wrap"><button class="btn" data-action="csv">${I.down} Planilha (CSV)</button><button class="btn" data-action="dl-geral">${I.down} Relatório (HTML)</button><button class="btn btn-dark" data-action="print-geral">${I.print} Imprimir / PDF</button></div></div></div>
-    <div class="doc-preview">${geralHTML(d)}</div>`;
+    ${empresaOk()?'':'<div class="notice">Preencha a razão social e o CNPJ em <a href="#config"><b>Configurações</b></a> antes de imprimir documentos oficiais.</div>'}<div class="doc-preview">${geralHTML(d)}</div>`;
   }
   const ativos=S.colabs.slice().sort(byName);
   return head('Relatórios','Ficha de EPI de cada colaborador, com as confirmações anexadas.')+tabs+
   `<div class="panel" style="margin-bottom:16px"><div class="toolbar"><div class="field" style="flex:1;min-width:240px"><label for="r-col">Colaborador</label><select class="input" id="r-col"><option value="">Selecione…</option>${ativos.map(c=>`<option value="${c.id}" ${R.colabId===c.id?'selected':''}>${esc(c.nome)} — ${esc(c.matricula||'s/ matrícula')}${c.ativo===false?' (inativo)':''}</option>`).join('')}</select></div>
   <div style="display:flex;gap:8px;align-self:flex-end;flex-wrap:wrap"><button class="btn" data-action="dl-ficha" ${R.colabId?'':'disabled'}>${I.down} Ficha (HTML)</button><button class="btn btn-dark" data-action="print-ficha" ${R.colabId?'':'disabled'}>${I.print} Imprimir / PDF</button></div></div></div>
-  <div class="doc-preview" id="ficha-prev">${R.colabId?'<p style="color:#666">Carregando ficha…</p>':'<p style="color:#666;margin:0">Selecione um colaborador para ver a ficha.</p>'}</div>`;
+  ${empresaOk()?'':'<div class="notice">Preencha a razão social e o CNPJ em <a href="#config"><b>Configurações</b></a> antes de imprimir documentos oficiais.</div>'}<div class="doc-preview" id="ficha-prev">${R.colabId?'<p style="color:#666">Carregando ficha…</p>':'<p style="color:#666;margin:0">Selecione um colaborador para ver a ficha.</p>'}</div>`;
 }
 async function loadEvid(colabId){
   const nEnt=S.entregas.filter(e=>e.colaboradorId===colabId).length;const c=S.evCache[colabId];
@@ -1151,15 +1205,59 @@ function csvGeral(){
   return '\uFEFF'+[hdr.join(';'),...lines].join('\r\n');
 }
 
+
+/* ---------- Termo LGPD (biometria) ---------- */
+function termoHTML(c){
+  const k=cfg();const L=(v,w)=>v?esc(v):`<span class="doc-blank" style="min-width:${w||200}px"></span>`;
+  return`<div class="doc doc-termo-page"><header class="doc-h"><div class="doc-brand">${k.logo?`<img class="doc-logo" src="${esc(k.logo)}" alt="">`:''}<div><div class="doc-k">Termo de consentimento · LGPD</div><h1>${esc(k.empresa||'[Preencha a razão social em Configurações]')}</h1><div>${esc([k.cnpj&&'CNPJ '+k.cnpj,k.unidade].filter(Boolean).join(' · '))}</div></div></div></header>
+  <h2 style="margin-top:4px">Consentimento para uso de biometria facial na entrega de EPI</h2>
+  <table class="doc-id"><tr><th>Titular</th><td>${L(c&&c.nome,260)}</td><th>CPF</th><td>${L(c&&c.cpf,140)}</td></tr><tr><th>Matrícula</th><td>${L(c&&c.matricula,120)}</td><th>Função / setor</th><td>${L(c&&[c.funcao,c.setor].filter(Boolean).join(' / '),160)}</td></tr></table>
+  <ol class="doc-list">
+    <li><b>Finalidade.</b> A imagem do rosto do titular será usada exclusivamente para confirmar a sua identidade no recebimento de Equipamentos de Proteção Individual (EPI) e para registrar essa confirmação na ficha de controle de entrega exigida pela NR-06.</li>
+    <li><b>Dados tratados.</b> Um código numérico extraído da imagem do rosto (modelo biométrico), uma miniatura da foto usada no cadastro e uma foto registrada no momento de cada confirmação de recebimento. Não são gravados vídeos.</li>
+    <li><b>Base legal.</b> Consentimento específico e destacado do titular, conforme o art. 11, inciso I, da Lei nº 13.709/2018 (LGPD).</li>
+    <li><b>Acesso e armazenamento.</b> Os dados ficam em sistema protegido por login, acessível somente a pessoas autorizadas pela empresa, e são armazenados em provedor de nuvem contratado para esse fim. Não são compartilhados com terceiros para outras finalidades.</li>
+    <li><b>Consentimento opcional.</b> O titular pode não autorizar. Nesse caso, confirma o recebimento dos EPIs por assinatura, sem qualquer prejuízo.</li>
+    <li><b>Revogação e exclusão.</b> O titular pode revogar este consentimento a qualquer momento, por solicitação ao contato abaixo. A revogação e o fim do vínculo de trabalho levam à exclusão do modelo biométrico e da miniatura de cadastro. Os registros de entregas já realizadas são mantidos, pois a empresa precisa guardá-los para cumprir obrigações legais.</li>
+    <li><b>Direitos do titular.</b> Confirmação, acesso, correção, informação sobre compartilhamento e demais direitos previstos no art. 18 da LGPD.</li>
+  </ol>
+  <p><b>Contato do encarregado de dados:</b> ${L(k.encarregado,320)}</p>
+  <div class="doc-choice"><span>☐ Autorizo o uso da minha biometria facial para a finalidade descrita acima.</span><span>☐ Não autorizo. Confirmarei o recebimento dos EPIs por assinatura.</span></div>
+  <p style="margin-top:26px">${esc(k.unidade||'')}${k.unidade?', ':''}<span class="doc-blank" style="min-width:40px"></span> de <span class="doc-blank" style="min-width:120px"></span> de <span class="doc-blank" style="min-width:60px"></span>.</p>
+  <div class="doc-sign two"><div>${c?esc(c.nome):''}<br><span>Assinatura do titular</span></div><div>${esc(k.responsavel||'')}<br><span>${esc(k.cargoResponsavel||'Representante da empresa')}</span></div></div>
+  <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())} · ${esc(BRAND.nome)}${BRAND.fornecedor?' · '+esc(BRAND.fornecedor):''}</footer></div>`;
+}
+function termoModal(c){
+  const inner=termoHTML(c);
+  const m=openModal(`<div class="modal-head"><h2>Termo de consentimento (biometria)</h2><button class="icon-btn" data-close aria-label="Fechar">${I.close}</button></div>
+  <div class="modal-body"><p class="small muted" style="margin-top:0">Imprima, colete a assinatura e arquive. É um modelo de referência: vale uma revisão pelo jurídico da empresa antes do uso.</p><div class="doc-preview">${inner}</div></div>
+  <div class="modal-foot"><button class="btn" data-dl>${I.down} Baixar (HTML)</button><button class="btn btn-dark" data-pr>${I.print} Imprimir / PDF</button></div>`,{wide:true});
+  m.querySelector('[data-close]').onclick=()=>closeModal(m);
+  m.querySelector('[data-pr]').onclick=()=>doPrint(inner);
+  m.querySelector('[data-dl]').onclick=()=>saveFile(`termo-biometria_${c?norm(c.nome).replace(/[^a-z0-9]+/g,'-'):'em-branco'}.html`,wrapDoc('Termo de consentimento — biometria',inner));
+}
+
 /* ---------- Config ---------- */
 function vConfig(){
   const c=cfg();
+  if(!isAdmin())return head('Configurações','Sua conta.')+`<div class="panel panel-pad" style="max-width:560px"><h2 style="margin-bottom:8px">Sua conta</h2>
+    <p style="margin:0 0 4px">${esc(Store.user?Store.user.email:'')}</p><p class="muted" style="margin-top:0">Perfil: <b>Operador</b>. Você pode registrar entregas e consultar cadastros e relatórios. Cadastros e configurações ficam com os administradores.</p>
+    <button class="btn" data-action="logout">Sair</button></div>`;
   return head('Configurações','Dados que aparecem nas fichas e relatórios.')+
   `<div class="grid g2"><form class="panel panel-pad" data-form="config"><div class="form">
-    <div class="field full"><label for="c-emp">Razão social</label><input class="input" id="c-emp" name="empresa" value="${esc(c.empresa)}"></div>
-    <div class="field"><label for="c-cnpj">CNPJ</label><input class="input" id="c-cnpj" name="cnpj" value="${esc(c.cnpj)}"></div>
-    <div class="field"><label for="c-uni">Unidade</label><input class="input" id="c-uni" name="unidade" value="${esc(c.unidade)}"></div>
-    <div class="field full"><label for="c-resp">Responsável pelas entregas (SESMT / almoxarifado)</label><input class="input" id="c-resp" name="responsavel" value="${esc(c.responsavel)}"></div>
+    <div class="section-title" style="border-top:0;padding-top:0;margin-top:0">Empresa</div>
+    <div class="field full"><label for="c-emp">Razão social</label><input class="input" id="c-emp" name="empresa" required placeholder="Ex.: Brazfrig Indústria de Alimentos Ltda" value="${esc(c.empresa)}"><div class="hint">Sai no cabeçalho das fichas e relatórios.</div></div>
+    <div class="field"><label for="c-curto">Nome curto</label><input class="input" id="c-curto" name="nomeCurto" placeholder="Ex.: Brazfrig" value="${esc(c.nomeCurto)}"><div class="hint">Aparece no menu.</div></div>
+    <div class="field"><label for="c-cnpj">CNPJ</label><input class="input" id="c-cnpj" name="cnpj" inputmode="numeric" placeholder="00.000.000/0000-00" value="${esc(c.cnpj)}"><div class="hint" id="c-cnpj-h"></div></div>
+    <div class="field full"><label for="c-uni">Unidade / endereço</label><input class="input" id="c-uni" name="unidade" placeholder="Ex.: Unidade Cordisburgo – MG" value="${esc(c.unidade)}"></div>
+    <div class="field full"><label>Logotipo</label><div class="logo-drop"><div class="prev" id="logo-prev">${c.logo?`<img src="${esc(c.logo)}" alt="Logotipo">`:'Sem logo'}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="logo-pick">Escolher imagem</button><button type="button" class="btn btn-danger" id="logo-del" ${c.logo?'':'hidden'}>Remover</button></div>
+      <input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" id="logo-file" hidden></div><div class="hint">PNG com fundo transparente fica melhor. Sai no menu, nas fichas e nos relatórios.</div></div>
+    <div class="section-title">Assinatura das fichas</div>
+    <div class="field"><label for="c-resp">Responsável pelas entregas</label><input class="input" id="c-resp" name="responsavel" placeholder="Nome completo" value="${esc(c.responsavel)}"></div>
+    <div class="field"><label for="c-cargo">Cargo</label><input class="input" id="c-cargo" name="cargoResponsavel" placeholder="Ex.: Técnico de Segurança do Trabalho" value="${esc(c.cargoResponsavel)}"></div>
+    <div class="field full"><label for="c-dpo">Contato do encarregado de dados (LGPD)</label><input class="input" id="c-dpo" name="encarregado" placeholder="Ex.: Maria Silva · lgpd@empresa.com.br" value="${esc(c.encarregado||'')}"><div class="hint">Sai no termo de consentimento da biometria.</div></div>
+    <div class="section-title">Reconhecimento facial</div>
     <div class="field full"><label for="c-lim">Rigor do reconhecimento facial: <span id="c-lim-v" class="num">${String(c.limiar).replace('.',',')}</span></label><input type="range" id="c-lim" name="limiar" min="0.35" max="0.6" step="0.01" value="${c.limiar}" style="width:100%;accent-color:var(--brand)">
     <div class="hint">Valores menores exigem mais semelhança (mais seguro, mas pode recusar a pessoa certa com pouca luz). O padrão 0,50 funciona bem na maioria dos casos.</div></div>
   </div><div style="margin-top:16px"><button class="btn btn-primary" type="submit">Salvar configurações</button></div></form>
@@ -1168,16 +1266,46 @@ function vConfig(){
     <p class="small muted">${S.colabs.length} colaboradores · ${S.epis.length} EPIs · ${S.entregas.length} entregas</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-action="backup">${I.down} Baixar backup completo (JSON)</button><button class="btn" data-action="restore">Importar backup</button>${Store.mode==='supabase'?`<button class="btn" data-action="logout">Sair (${esc(Store.user.email)})</button>`:''}</div>
     <input type="file" accept=".json,application/json" id="restore-file" hidden>
+    <div style="margin-top:10px"><button class="btn" data-action="termo" data-id="">Termo LGPD em branco</button>${DEMO?' <button class="btn btn-danger" data-action="demo-reset">Reiniciar demonstração</button>':''}</div>
     <h2 style="margin:22px 0 8px">Sobre a biometria</h2>
-    <p class="small muted" style="margin:0">O reconhecimento roda no próprio navegador. Só são guardados um código numérico do rosto e uma miniatura da foto, nunca vídeo. Pela LGPD, a biometria é dado sensível: colete a autorização por escrito e remova a biometria quando o colaborador pedir ou for desligado.</p></div></div>`;
+    <p class="small muted" style="margin:0">O reconhecimento roda no próprio navegador. Só são guardados um código numérico do rosto e uma miniatura da foto, nunca vídeo. Pela LGPD, a biometria é dado sensível: colete a autorização por escrito e remova a biometria quando o colaborador pedir ou for desligado.</p></div></div>
+  ${Store.mode==='supabase'?`<div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Usuários e perfis</h2></div><div id="users-box" class="panel-pad muted">Carregando…</div></div>`:''}`;
 }
-AFTER.config=()=>{const r=$('#c-lim');if(r)r.addEventListener('input',()=>{$('#c-lim-v').textContent=String(r.value).replace('.',',');});};
+let LOGO=null;
+async function loadUsers(){
+  const box=$('#users-box');if(!box)return;
+  try{const list=await Store.perfis();
+    box.classList.remove('muted');
+    box.innerHTML=`<div class="table-wrap"><table class="t"><thead><tr><th>E-mail</th><th>Perfil</th></tr></thead><tbody>${list.map(u=>`<tr><td>${esc(u.email||u.user_id)}${u.user_id===Store.user.id?' <span class="chip">você</span>':''}</td><td><select class="input" style="width:auto" data-papel="${esc(u.user_id)}" ${u.user_id===Store.user.id?'disabled':''}><option value="admin" ${u.papel==='admin'?'selected':''}>Administrador</option><option value="operador" ${u.papel==='operador'?'selected':''}>Operador</option></select></td></tr>`).join('')}</tbody></table></div>
+    <p class="small muted" style="margin:14px 0 0"><b>Administrador:</b> cadastros, configurações, estoque e backup. <b>Operador:</b> registra entregas e consulta. Para incluir alguém, crie o usuário no Supabase (Authentication, depois Users, depois Add user). A pessoa entra como Operador e você ajusta o perfil aqui.</p>`;
+    $$('[data-papel]',box).forEach(sel=>sel.addEventListener('change',async()=>{try{await Store.setPapel(sel.dataset.papel,sel.value);toast('Perfil atualizado.');}catch(e){toast(/administrador/i.test(e.message||'')?e.message:errMsg(e),'bad');loadUsers();}}));
+  }catch(e){box.innerHTML=/perfis|PGRST205|42P01/i.test((e.message||'')+(e.code||''))?'Para usar perfis de acesso, rode o schema.sql atualizado no SQL Editor do Supabase.':esc(errMsg(e));}
+}
+AFTER.config=()=>{
+  if(!isAdmin())return;loadUsers();
+  LOGO=cfg().logo||'';
+  const r=$('#c-lim');if(r)r.addEventListener('input',()=>{$('#c-lim-v').textContent=String(r.value).replace('.',',');});
+  const cn=$('#c-cnpj'),hint=$('#c-cnpj-h');const chk=()=>{const v=cn.value;hint.textContent=v&&v.replace(/\D/g,'').length===14&&!cnpjValido(v)?'CNPJ inválido. Confira os números.':'';hint.style.color='var(--bad)';};
+  cn.addEventListener('input',()=>{cn.value=fmtCNPJ(cn.value);chk();});chk();
+  const file=$('#logo-file'),prev=$('#logo-prev'),del=$('#logo-del');
+  $('#logo-pick').onclick=()=>{file.value='';file.click();};
+  del.onclick=()=>{LOGO='';prev.innerHTML='Sem logo';del.hidden=true;};
+  file.onchange=async()=>{const f=file.files[0];if(!f)return;try{LOGO=await shrinkLogo(f);prev.innerHTML=`<img src="${esc(LOGO)}" alt="Logotipo">`;del.hidden=false;toast('Logo carregado. Clique em Salvar configurações.');}catch(e){toast('Não foi possível abrir esta imagem.','bad');}};
+};
+async function shrinkLogo(f){
+  const url=URL.createObjectURL(f);const img=new Image();img.src=url;await img.decode();
+  const W=Math.max(1,img.naturalWidth||300),H=Math.max(1,img.naturalHeight||120);const k=Math.min(1,480/W,200/H);
+  const c=document.createElement('canvas');c.width=Math.round(W*k);c.height=Math.round(H*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  let out=c.toDataURL('image/png');
+  if(out.length>180000){const c2=document.createElement('canvas');c2.width=c.width;c2.height=c.height;const x=c2.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c2.width,c2.height);x.drawImage(c,0,0);out=c2.toDataURL('image/jpeg',.85);}
+  URL.revokeObjectURL(url);return out;
+}
 
 async function restoreBackup(file){
   if(!file)return;let data;try{data=JSON.parse(await file.text());}catch(e){toast('Arquivo inválido. Use o backup .json gerado pelo sistema.','bad');return;}
   const cols=[['colaboradores','colaboradores'],['epis','epis'],['entregas','entregas'],['evidencias','evidencias']];
   const n=cols.reduce((a,[k])=>a+((data[k]||[]).length),0);
-  if(!n&&!data.config){toast('O arquivo não contém dados do Controle de EPI.','warn');return;}
+  if(!n&&!data.config){toast('O arquivo não contém dados do EPI Uai.','warn');return;}
   if(!await askConfirm(`Importar ${(data.colaboradores||[]).length} colaboradores, ${(data.epis||[]).length} EPIs e ${(data.entregas||[]).length} entregas? Registros com o mesmo código serão substituídos.`,{ok:'Importar'}))return;
   try{
     toast('Importando…');
@@ -1191,10 +1319,13 @@ document.addEventListener('submit',e=>{
   const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();
   if(f.dataset.form==='colab')saveColab(f);
   else if(f.dataset.form==='epi')saveEpi(f);
-  else if(f.dataset.form==='config'){const fd=new FormData(f);const data={empresa:String(fd.get('empresa')||'').trim(),cnpj:String(fd.get('cnpj')||'').trim(),unidade:String(fd.get('unidade')||'').trim(),responsavel:String(fd.get('responsavel')||'').trim(),limiar:Number(fd.get('limiar'))||0.5};
+  else if(f.dataset.form==='config'){const fd=new FormData(f);const g=k=>String(fd.get(k)||'').trim();const data={...S.config,encarregado:g('encarregado'),empresa:g('empresa'),nomeCurto:g('nomeCurto'),cnpj:g('cnpj'),unidade:g('unidade'),responsavel:g('responsavel'),cargoResponsavel:g('cargoResponsavel'),logo:LOGO==null?(S.config.logo||''):LOGO,limiar:Number(fd.get('limiar'))||0.5};
+    if(data.cnpj&&!cnpjValido(data.cnpj)){toast('O CNPJ informado é inválido.','bad');return;}
     Store.set('config','app',data).then(()=>{toast('Configurações salvas.');document.activeElement&&document.activeElement.blur();render(true);}).catch(er=>toast(errMsg(er),'bad'));}
 });
 const ACT={
+  'termo':el=>termoModal(el.dataset.id?colabById(el.dataset.id):null),
+  'demo-reset':async()=>{if(!await askConfirm('Apagar os dados desta demonstração e recomeçar com os dados de exemplo?',{ok:'Reiniciar'}))return;Object.keys(localStorage).filter(k=>k.startsWith(LS_PREFIX)).forEach(k=>localStorage.removeItem(k));location.hash='#painel';location.reload();},
   'new-colab':()=>colabForm(),
   'edit-colab':el=>colabForm(colabById(el.dataset.id)),
   'import-colabs':()=>importModal(),
@@ -1223,23 +1354,54 @@ const ACT={
   'print-ficha':async()=>{const c=colabById(R.colabId);if(!c)return;doPrint(await fichaFor(c.id));},
   'logout':async(el,e)=>{e.preventDefault();if(Store.sb){await Store.sb.auth.signOut();location.reload();}},
   'restore':()=>{const inp=$('#restore-file');inp.value='';inp.onchange=()=>restoreBackup(inp.files[0]);inp.click();},
-  'backup':async()=>{const ev=await Store.all('evidencias').catch(()=>[]);saveFile(`backup-controle-epi_${localISODate()}.json`,JSON.stringify({geradoEm:new Date().toISOString(),config:S.config,colaboradores:S.colabs,epis:S.epis,entregas:S.entregas,evidencias:ev},null,1));},
+  'backup':async()=>{const ev=await Store.all('evidencias').catch(()=>[]);saveFile(`backup-epi-uai_${localISODate()}.json`,JSON.stringify({geradoEm:new Date().toISOString(),config:S.config,colaboradores:S.colabs,epis:S.epis,entregas:S.entregas,evidencias:ev},null,1));},
 };
 document.addEventListener('click',e=>{
   const a=e.target.closest('[data-action]');
-  if(a&&ACT[a.dataset.action]){if(a.tagName==='INPUT'&&a.type==='checkbox'){ACT[a.dataset.action](a,e);return;}if(a.disabled)return;ACT[a.dataset.action](a,e);return;}
+  if(a&&ACT[a.dataset.action]){if(ADMIN_ACTS.has(a.dataset.action)&&!isAdmin()){e.preventDefault();toast('Apenas administradores podem fazer isso.','warn');return;}
+    if(a.tagName==='INPUT'&&a.type==='checkbox'){ACT[a.dataset.action](a,e);return;}if(a.disabled)return;ACT[a.dataset.action](a,e);return;}
   const r=e.target.closest('tr[data-href]');if(r){location.hash=r.dataset.href;}
 });
+
+
+/* ---------- Demonstração ---------- */
+function demoSignature(seed){
+  const c=document.createElement('canvas');c.width=450;c.height=150;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,450,150);
+  x.strokeStyle='#14252a';x.lineWidth=3;x.lineCap='round';x.beginPath();let r=seed*9301+49297;const rnd=()=>((r=(r*9301+49297)%233280)/233280);
+  x.moveTo(60,95);for(let i=0;i<9;i++){x.bezierCurveTo(80+i*36,40+rnd()*30,95+i*36,120-rnd()*20,110+i*36,80+rnd()*25);}x.stroke();
+  x.beginPath();x.moveTo(70,110);x.lineTo(380,104);x.stroke();return c.toDataURL('image/jpeg',.7);
+}
+function demoSeed(){
+  if(localStorage.getItem(LS_PREFIX+'seeded'))return;
+  const put=(col,obj)=>{const all={};obj.forEach(o=>{const{id,...v}=o;all[id]=v;});localStorage.setItem(LS_PREFIX+col,JSON.stringify(all));};
+  const day=86400000,now=Date.now(),iso=t=>new Date(t).toISOString(),dISO=t=>new Date(t).toISOString().slice(0,10);
+  put('config',[{id:'app',empresa:'Frigorífico Modelo Alimentos Ltda',nomeCurto:'Frigorífico Modelo',cnpj:'11.222.333/0001-81',unidade:'Unidade Demonstração – MG',responsavel:'Ana Paula Ribeiro',cargoResponsavel:'Técnica de Segurança do Trabalho',encarregado:'lgpd@frigorificomodelo.com.br',limiar:0.5}]);
+  const E=[['e1','Luva de malha de aço','12451','Proteção dos membros superiores',365,3,20,4,189.9],['e2','Luva nitrílica cano longo','38210','Proteção dos membros superiores',15,90,40,60,9.8],['e3','Bota de PVC branca cano longo','42077','Proteção dos membros inferiores',180,20,-3,8,54.9],['e4','Avental de PVC impermeável','29874','Proteção do tronco',60,45,4,10,32.5],['e5','Protetor auricular tipo plug','5745','Proteção auditiva',30,300,200,100,1.9],['e6','Japona térmica para câmara fria','40121','Proteção do tronco',365,25,90,6,219],['e7','Óculos de proteção incolor','10346','Proteção dos olhos e face',180,35,500,10,12.4],['e8','Touca árabe (capuz)','33415','Proteção da cabeça',90,60,300,20,6.5]];
+  put('epis',E.map(([id,nome,ca,categoria,per,est,caDias,min,custo])=>({id,nome,ca,categoria,periodicidadeDias:per,estoque:est,estoqueMinimo:min,custoUnit:custo,validadeCA:dISO(now+caDias*day),fabricante:'',descricao:'',ativo:true})));
+  const P=[['Adriano Costa','Filetagem','Operador de filetagem'],['Bruna Martins','Filetagem','Operadora de filetagem'],['Carlos Eduardo Lima','Recepção','Auxiliar de produção'],['Daniela Souza','Embalagem','Auxiliar de embalagem'],['Edson Pereira','Câmara fria','Operador de câmara fria'],['Fernanda Alves','Embalagem','Auxiliar de embalagem'],['Gilberto Nunes','Manutenção','Mecânico industrial'],['Helena Rocha','Filetagem','Operadora de filetagem'],['Igor Fernandes','Recepção','Auxiliar de produção'],['Juliana Teixeira','Qualidade','Analista de qualidade'],['Lucas Barbosa','Câmara fria','Operador de empilhadeira'],['Márcia Gomes','Embalagem','Líder de embalagem']];
+  const C=P.map(([nome,setor,funcao],i)=>({id:'c'+(i+1),nome,setor,funcao,matricula:String(1101+i),cpf:'',unidade:'Unidade Demonstração – MG',admissao:dISO(now-(400+i*37)*day),ativo:true}));
+  put('colaboradores',C);
+  const kit={Filetagem:['e1','e2','e3','e4','e5','e8'],Recepção:['e2','e3','e4','e5','e8'],Embalagem:['e2','e3','e5','e8'],'Câmara fria':['e3','e5','e6','e8'],Manutenção:['e3','e5','e7'],Qualidade:['e3','e8']};
+  const ents=[],evs=[];let n=0;
+  C.forEach((c,ci)=>{const k=kit[c.setor]||['e3'];
+    for(let t=175;t>0;t-=18+((ci*7+t)%11)){const pick=k.filter((_,j)=>(t+j+ci)%3!==0).slice(0,3);if(!pick.length)continue;
+      const when=now-t*day+(8+ci%6)*3600000;const id='d'+(++n);
+      const itens=pick.map(eid=>{const e=E.find(x=>x[0]===eid);return{epiId:eid,nome:e[1],ca:e[2],qtd:eid==='e2'||eid==='e5'?2:1,motivo:t>160?'Admissão / primeira entrega':'Troca periódica',custoUnit:e[8],proximaTroca:new Date(when+e[4]*day).toISOString()};});
+      ents.push({id,colaboradorId:c.id,colaboradorNome:c.nome,matricula:c.matricula,cpf:'',setor:c.setor,funcao:c.funcao,data:iso(when),itens,obs:'',validacao:{metodo:'assinatura',distancia:null,dataHora:iso(when)},registradoPor:null});
+      evs.push({id,colaboradorId:c.id,entregaId:id,metodo:'assinatura',foto:null,assinatura:demoSignature(n),dataHora:iso(when)});}});
+  put('entregas',ents);put('evidencias',evs);localStorage.setItem(LS_PREFIX+'seeded','1');
+}
 
 /* ---------- login (Supabase) ---------- */
 function showLogin(msg){
   document.body.innerHTML=`<div class="login-wrap"><form class="panel login" id="login-form">
-    <div class="brandmark" style="padding:0;margin-bottom:18px"><div class="logo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M2 15h20v2H2z"/><path d="M12 7V4"/></svg></div><div><b style="color:var(--ink)">Controle de EPI</b><span>Entre com o seu e-mail e senha</span></div></div>
+    <div class="brandmark" style="padding:0;margin-bottom:18px"><div class="logo"><svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#F2B705"/><path d="M13 41 A19 19 0 0 1 51 41 Z" fill="#1E1800"/><rect x="29" y="21.5" width="6" height="19.5" rx="2" fill="#F2B705"/><path d="M20.5 41 A12.5 12.5 0 0 1 24 31.5" fill="none" stroke="#F2B705" stroke-width="2.6" stroke-linecap="round"/><path d="M9 41 H53 Q58 41 58 45.5 V46 H11 Q9 46 9 44 Z" fill="#1E1800"/></svg></div><div><b style="color:var(--ink)">${brandHTML()}</b><span>Entre com o seu e-mail e senha</span></div></div>
     <div class="field"><label for="l-email">E-mail</label><input class="input" type="email" id="l-email" required autocomplete="username"></div>
     <div class="field" style="margin-top:12px"><label for="l-pass">Senha</label><input class="input" type="password" id="l-pass" required autocomplete="current-password"></div>
     <p class="small" id="l-msg" style="min-height:20px;color:var(--bad)">${esc(msg||'')}</p>
     <button class="btn btn-primary btn-lg" style="width:100%" type="submit">Entrar</button>
     <button class="btn" type="button" id="l-forgot" style="width:100%;margin-top:8px;border:0;background:none">Esqueci minha senha</button>
+    ${BRAND.fornecedor||BRAND.contato?`<p class="small muted" style="text-align:center;margin:14px 0 0">${esc([BRAND.fornecedor,BRAND.contato].filter(Boolean).join(' · '))}</p>`:''}
   </form></div><div id="toast" role="status" aria-live="polite"></div>`;
   const f=$('#login-form'),m=$('#l-msg');
   f.onsubmit=async e=>{e.preventDefault();m.style.color='var(--muted)';m.textContent='Entrando…';
@@ -1266,9 +1428,12 @@ function newPasswordModal(){
     if(/type=recovery/.test(location.hash)){const {data}=await Store.sb.auth.getSession();Store.user=data&&data.session?data.session.user:Store.user;}
     if(!Store.user){showLogin();return;}
     S.uid=Store.user.email;S.names[S.uid]=Store.user.email;
+    try{const pf=await Store.perfil();S.papel=pf.papel;}catch(e){console.error(e);S.papel='operador';}
     if(/type=recovery/.test(location.hash)||/access_token=/.test(location.hash))history.replaceState(null,'',location.pathname+'#painel');
   }
   try{if(Store.mode!=='supabase'&&window.claude&&window.claude.use){const u=await window.claude.use('user');if(u){S.userCap=u;try{S.uid=await u.id();}catch(e){}}}}catch(e){}
+  if(DEMO&&Store.mode==='local'){try{demoSeed();}catch(e){console.error(e);}
+    const bar=document.createElement('div');bar.className='demo-bar';bar.innerHTML='Demonstração com dados fictícios. O que você fizer fica salvo só neste navegador. Experimente cadastrar o seu rosto em Colaboradores.';document.body.prepend(bar);}
   const mark=k=>{S.loaded[k]=true;};
   Store.watch('colaboradores',rows=>{S.colabs=rows.sort(byName);mark('colaboradores');render();});
   Store.watch('epis',rows=>{S.epis=rows;mark('epis');render();});
