@@ -289,7 +289,7 @@ table.t td.r,table.t th.r{text-align:right}
 .doc-sum div{border:1px solid #cfd6d5;border-radius:6px;padding:8px 10px}
 .doc-sum b{display:block;font-size:18px;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif}
 .doc-sum span{color:#555;font-size:11.5px}
-.doc .proofc img{max-width:120px;max-height:80px;display:block;margin-bottom:4px;border-radius:4px;border:1px solid #ddd}
+.doc .proofc img{max-width:200px;max-height:150px;display:block;margin-bottom:4px;border-radius:4px;border:1px solid #ddd}
 .doc-sign{display:flex;justify-content:flex-end;margin-top:48px}
 .doc-sign div{border-top:1px solid #333;padding-top:6px;min-width:280px;text-align:center}
 .doc-sign span{font-size:11px;color:#555}
@@ -321,7 +321,7 @@ table.t td.r,table.t th.r{text-align:right}
 <script>
 'use strict';
 const FACEAPI_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.js';
-const DOC_CSS=".doc{font-family:Barlow,Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:12.5px;line-height:1.45;max-width:1000px;margin:0 auto}\n.doc h1{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:22px;margin:2px 0;font-weight:600;color:#111}\n.doc h2{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:15px;margin:20px 0 8px;font-weight:600;color:#111}\n.doc-h{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid #0E4A57;padding-bottom:12px;margin-bottom:14px}\n.doc-k{font-size:12px;color:#0E4A57;font-weight:600}\n.doc-meta{text-align:right;font-size:12px;color:#444}\n.doc-brand{display:flex;gap:16px;align-items:center}\n.doc-list{padding-left:18px;margin:12px 0}.doc-list li{margin-bottom:7px}\n.doc-blank{display:inline-block;border-bottom:1px solid #555;height:1.1em;vertical-align:bottom}\n.doc-choice{display:flex;flex-direction:column;gap:6px;border:1px solid #cfd6d5;border-radius:6px;padding:10px 12px;margin-top:14px}\n.doc-sign.two{justify-content:space-between;gap:30px}.doc-sign.two div{flex:1;min-width:0}\n.doc-logo{max-width:150px;max-height:64px;object-fit:contain}\n.doc-photo{width:84px;height:84px;border-radius:6px;object-fit:cover;border:1px solid #ccc}\n.doc table{width:100%;border-collapse:collapse;margin:0 0 6px}\n.doc th,.doc td{border:1px solid #cfd6d5;padding:6px 8px;text-align:left;vertical-align:top}\n.doc thead th{background:#eef2f1;font-weight:600;font-size:11.5px}\n.doc .r{text-align:right}\n.doc-id th{background:#eef2f1;width:14%;font-weight:600}\n.doc-termo{border-left:3px solid #F2B705;background:#fbf8ec;padding:8px 12px;margin:14px 0}\n.doc-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 4px}\n.doc-sum div{border:1px solid #cfd6d5;border-radius:6px;padding:8px 10px}\n.doc-sum b{display:block;font-size:18px;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif}\n.doc-sum span{color:#555;font-size:11.5px}\n.doc .proofc img{max-width:120px;max-height:80px;display:block;margin-bottom:4px;border-radius:4px;border:1px solid #ddd}\n.doc-sign{display:flex;justify-content:flex-end;margin-top:48px}\n.doc-sign div{border-top:1px solid #333;padding-top:6px;min-width:280px;text-align:center}\n.doc-sign span{font-size:11px;color:#555}\n.doc-f{margin-top:18px;font-size:11px;color:#777;border-top:1px solid #ddd;padding-top:6px}\n.doc tr{page-break-inside:avoid}\n.doc small{color:#666}\n@page{size:A4;margin:14mm}\n";
+const DOC_CSS=".doc{font-family:Barlow,Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:12.5px;line-height:1.45;max-width:1000px;margin:0 auto}\n.doc h1{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:22px;margin:2px 0;font-weight:600;color:#111}\n.doc h2{font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:15px;margin:20px 0 8px;font-weight:600;color:#111}\n.doc-h{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid #0E4A57;padding-bottom:12px;margin-bottom:14px}\n.doc-k{font-size:12px;color:#0E4A57;font-weight:600}\n.doc-meta{text-align:right;font-size:12px;color:#444}\n.doc-brand{display:flex;gap:16px;align-items:center}\n.doc-list{padding-left:18px;margin:12px 0}.doc-list li{margin-bottom:7px}\n.doc-blank{display:inline-block;border-bottom:1px solid #555;height:1.1em;vertical-align:bottom}\n.doc-choice{display:flex;flex-direction:column;gap:6px;border:1px solid #cfd6d5;border-radius:6px;padding:10px 12px;margin-top:14px}\n.doc-sign.two{justify-content:space-between;gap:30px}.doc-sign.two div{flex:1;min-width:0}\n.doc-logo{max-width:150px;max-height:64px;object-fit:contain}\n.doc-photo{width:84px;height:84px;border-radius:6px;object-fit:cover;border:1px solid #ccc}\n.doc table{width:100%;border-collapse:collapse;margin:0 0 6px}\n.doc th,.doc td{border:1px solid #cfd6d5;padding:6px 8px;text-align:left;vertical-align:top}\n.doc thead th{background:#eef2f1;font-weight:600;font-size:11.5px}\n.doc .r{text-align:right}\n.doc-id th{background:#eef2f1;width:14%;font-weight:600}\n.doc-termo{border-left:3px solid #F2B705;background:#fbf8ec;padding:8px 12px;margin:14px 0}\n.doc-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 4px}\n.doc-sum div{border:1px solid #cfd6d5;border-radius:6px;padding:8px 10px}\n.doc-sum b{display:block;font-size:18px;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif}\n.doc-sum span{color:#555;font-size:11.5px}\n.doc .proofc img{max-width:200px;max-height:150px;display:block;margin-bottom:4px;border-radius:4px;border:1px solid #ddd}\n.doc-sign{display:flex;justify-content:flex-end;margin-top:48px}\n.doc-sign div{border-top:1px solid #333;padding-top:6px;min-width:280px;text-align:center}\n.doc-sign span{font-size:11px;color:#555}\n.doc-f{margin-top:18px;font-size:11px;color:#777;border-top:1px solid #ddd;padding-top:6px}\n.doc tr{page-break-inside:avoid}\n.doc small{color:#666}\n@page{size:A4;margin:14mm}\n";
 
 /* ---------- utils ---------- */
 const $=(s,r=document)=>r.querySelector(s);
@@ -711,7 +711,7 @@ function cameraModal({mode,colab,title}){
             if(det){
               const d=Face.minDist(det.descriptor,colab.faceDescriptors);
               if(d<lim){streak++;miss=0;draw(det,'#5BD08B');status('Confirmando identidade…','ok');
-                if(streak>=3){box.classList.add('matched');const f=grabFrame(video);setTimeout(()=>finish({distancia:Math.round(d*1000)/1000,foto:f}),250);return;}}
+                if(streak>=3){box.classList.add('matched');const f=grabFrame(video,640);setTimeout(()=>finish({distancia:Math.round(d*1000)/1000,foto:f}),250);return;}}
               else{streak=0;miss++;draw(det,'#FF6B5E');if(miss<=4)status('Rosto detectado. Comparando…');else status('O rosto não confere com '+colab.nome+'. Se for a pessoa certa, melhore a iluminação ou use a assinatura na tela.','bad');}
             }else{draw(null);status('Posicione o rosto dentro da moldura.');}
           }
@@ -756,7 +756,7 @@ function cameraModal({mode,colab,title}){
           else status('Rosto não reconhecido. Tire outra foto ou busque pelo nome.','warn');
         }else{
           const d=Face.minDist(det.descriptor,colab.faceDescriptors);
-          if(d<lim){box.classList.add('matched');status('Identidade confirmada.','ok');const f=grabFrame(still);setTimeout(()=>finish({distancia:Math.round(d*1000)/1000,foto:f}),500);}
+          if(d<lim){box.classList.add('matched');status('Identidade confirmada.','ok');const f=grabFrame(still,640);setTimeout(()=>finish({distancia:Math.round(d*1000)/1000,foto:f}),500);}
           else status('O rosto da foto não confere com '+colab.nome+'. Tire outra foto ou use a assinatura na tela.','bad');
         }
       }catch(e){console.error(e);status('Não foi possível analisar a foto.','bad');}
@@ -1038,6 +1038,44 @@ function stockIn(p){
     try{await Store.update('epis',p.id,{estoque:Number(p.estoque||0)+q});closeModal(m,{silent:true});toast('Estoque atualizado.');render(true);}catch(e){toast(errMsg(e),'bad');}};
 }
 
+
+/* ---------- localização e carimbo na evidência ---------- */
+const Geo={last:null,pending:null,
+  get(max=8000){
+    if(this.last&&Date.now()-this.last.t<120000)return Promise.resolve(this.last);
+    if(this.pending)return this.pending;
+    this.pending=new Promise(res=>{
+      if(!navigator.geolocation){res({erro:'Aparelho sem localização'});return;}
+      let done=false;const tm=setTimeout(()=>{if(!done){done=true;res({erro:'Localização demorou demais'});}},max);
+      navigator.geolocation.getCurrentPosition(p=>{if(done)return;done=true;clearTimeout(tm);
+          this.last={lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),acc:Math.round(p.coords.accuracy),t:Date.now()};res(this.last);},
+        e=>{if(done)return;done=true;clearTimeout(tm);res({erro:e.code===1?'Permissão de localização negada':'Localização indisponível'});},
+        {enableHighAccuracy:true,timeout:max,maximumAge:60000});
+    }).finally(()=>{this.pending=null;});
+    return this.pending;
+  }
+};
+const fmtStamp=d=>{const p=n=>String(n).padStart(2,'0');return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;};
+const geoTxt=g=>g&&g.lat!=null?`Lat ${g.lat.toFixed(6)}  Long ${g.lng.toFixed(6)}  (±${g.acc} m)`:`Localização: ${g&&g.erro?g.erro.toLowerCase():'indisponível'}`;
+const geoRec=g=>g&&g.lat!=null?{lat:g.lat,lng:g.lng,precisao:g.acc}:{lat:null,lng:null,precisao:null,geoErro:(g&&g.erro)||'indisponível'};
+async function stampImage(dataUrl,when,g,{below=false}={}){
+  const img=new Image();img.src=dataUrl;await img.decode();
+  const W=img.naturalWidth,H=img.naturalHeight;const fs=Math.max(12,Math.round(W/34)),pad=Math.round(fs*.55),lh=Math.round(fs*1.28);
+  const k=cfg();const lines=[fmtStamp(when),geoTxt(g),[k.nomeCurto||k.empresa,k.unidade].filter(Boolean).join(' · ')].filter(Boolean);
+  const boxH=pad*2+lh*lines.length;
+  const c=document.createElement('canvas');c.width=W;c.height=below?H+boxH:H;const x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0);
+  x.font=`600 ${fs}px Barlow, "Helvetica Neue", Arial, sans-serif`;x.textBaseline='top';
+  const tw=Math.min(W-2*pad,Math.max(...lines.map(t=>x.measureText(t).width)));
+  const bw=below?W:Math.min(W,tw+pad*2),bx=W-bw,by=c.height-boxH;
+  x.fillStyle=below?'#14252a':'rgba(0,0,0,.62)';x.fillRect(bx,by,bw,boxH);
+  x.fillStyle='#fff';x.textAlign=below?'left':'right';
+  lines.forEach((t,i)=>x.fillText(t,below?pad:W-pad,by+pad+i*lh,W-2*pad));
+  return c.toDataURL('image/jpeg',.78);
+}
+function geoLink(v){if(!v||v.lat==null)return v&&v.geoErro?`<br><small>Sem localização (${esc(v.geoErro)})</small>`:'';
+  return `<br><small><a href="https://www.google.com/maps?q=${v.lat},${v.lng}" target="_blank" rel="noopener">${v.lat.toFixed(5)}, ${v.lng.toFixed(5)}</a>${v.precisao!=null?' ±'+v.precisao+' m':''}</small>`;}
+
 /* ---------- Entrega (wizard) ---------- */
 let W=newWizard();
 function newWizard(){return{step:1,colabId:null,via:null,itens:{},obs:'',valid:null,saving:false,done:null};}
@@ -1082,15 +1120,18 @@ function vEntrega(){
   return head('Nova entrega','O colaborador confirma o recebimento.')+steps+who+
   `<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Itens</h2><button class="btn" data-action="wizard-back2">Alterar</button></div><div class="table-wrap"><table class="t"><thead><tr><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th></tr></thead><tbody>${itens.map(x=>`<tr><td>${esc(x.p.nome)}</td><td>${esc(x.p.ca||'—')}</td><td class="r num">${esc(x.qtd)}</td><td class="small">${esc(x.motivo)}</td></tr>`).join('')}</tbody></table></div>
   <div class="panel-pad"><p class="termo">${esc(TERMO)}</p></div></div>
-  <div class="panel panel-pad">${W.valid?`<h2 style="margin-bottom:12px">Recebimento confirmado</h2><div class="proof">${W.valid.foto?`<img src="${esc(W.valid.foto)}" alt="Foto da confirmação">`:''}${W.valid.assinatura?`<img src="${esc(W.valid.assinatura)}" alt="Assinatura">`:''}<div>${valChip(W.valid)}<div class="small muted" style="margin-top:6px">${fmtDT(W.valid.dataHora)}${W.valid.distancia!=null?`<br>Distância facial ${String(W.valid.distancia).replace('.',',')} (limite ${String(cfg().limiar).replace('.',',')})`:''}</div></div></div>
+  <div class="panel panel-pad">${W.valid?`<h2 style="margin-bottom:12px">Recebimento confirmado</h2><div class="proof">${W.valid.foto?`<img src="${esc(W.valid.foto)}" alt="Foto da confirmação">`:''}${W.valid.assinatura?`<img src="${esc(W.valid.assinatura)}" alt="Assinatura">`:''}<div>${valChip(W.valid)}<div class="small muted" style="margin-top:6px">${fmtDT(W.valid.dataHora)}${geoLink(W.valid.geo)}${W.valid.distancia!=null?`<br>Distância facial ${String(W.valid.distancia).replace('.',',')} (limite ${String(cfg().limiar).replace('.',',')})`:''}</div></div></div>
     <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap"><button class="btn" data-action="val-clear">Refazer confirmação</button><button class="btn btn-primary btn-lg" data-action="save-delivery" ${W.saving?'disabled':''}>${W.saving?'Registrando…':'Registrar entrega'}</button></div>`
-  :`<h2 style="margin-bottom:6px">Como o colaborador vai confirmar?</h2><p class="muted" style="margin-top:0">A confirmação fica anexada à ficha de EPI.</p>
+  :`<h2 style="margin-bottom:6px">Como o colaborador vai confirmar?</h2><p class="muted" style="margin-top:0">A confirmação fica anexada à ficha de EPI, com data, hora e localização gravadas na imagem.</p><p class="small" id="geo-status" style="margin-top:-6px">📍 Obtendo localização…</p>
     <div style="display:flex;flex-direction:column;gap:10px">
       <button class="btn ${hasBio?'btn-primary':''} btn-lg" data-action="val-face" ${hasBio?'':'disabled'}>${I.face} Confirmar com reconhecimento facial</button>
       ${hasBio?'':'<span class="small muted">Este colaborador ainda não tem biometria cadastrada.</span>'}
       <button class="btn btn-lg ${hasBio?'':'btn-primary'}" data-action="val-sig">${I.pen} Assinar na tela</button></div>`}</div></div>`;
 }
 AFTER.entrega=()=>{
+  if(W.step===3&&!W.valid){Geo.get(10000).then(g=>{const el=$('#geo-status');if(!el)return;
+    el.innerHTML=g.lat!=null?`📍 Localização pronta (±${g.acc} m)`:`📍 ${esc(g.erro)}. A entrega será registrada sem coordenadas.${/negada/i.test(g.erro)?' Para liberar, clique no cadeado ao lado do endereço do site e permita a localização.':''}`;
+    el.style.color=g.lat!=null?'var(--ok)':'var(--warn)';});}
   const q=$('#q-pick');if(q)q.addEventListener('input',()=>{const v=norm(q.value);$$('.pick-row').forEach(r=>r.hidden=!!v&&!r.dataset.s.includes(v));});
   $$('[data-qtd]').forEach(el=>el.addEventListener('input',()=>{const it=W.itens[el.dataset.qtd];if(it)it.qtd=Math.max(1,parseInt(el.value)||1);}));
   $$('[data-motivo]').forEach(el=>el.addEventListener('change',()=>{const it=W.itens[el.dataset.motivo];if(it)it.motivo=el.value;}));
@@ -1110,9 +1151,9 @@ async function saveDelivery(){
   const id=newId(),now=new Date().toISOString();
   const itens=Object.entries(W.itens).map(([eid,v])=>{const p=epiById(eid);return p?{epiId:eid,nome:p.nome,ca:p.ca||'',qtd:Number(v.qtd)||1,motivo:v.motivo,custoUnit:Number(p.custoUnit)||0,proximaTroca:Number(p.periodicidadeDias)?addDays(now,p.periodicidadeDias):null}:null;}).filter(Boolean);
   const entrega={colaboradorId:c.id,colaboradorNome:c.nome,matricula:c.matricula||'',cpf:c.cpf||'',setor:c.setor||'',funcao:c.funcao||'',data:now,itens,obs:W.obs||'',
-    validacao:{metodo:W.valid.metodo,distancia:W.valid.distancia??null,dataHora:W.valid.dataHora},registradoPor:S.uid||null};
+    validacao:{metodo:W.valid.metodo,distancia:W.valid.distancia??null,dataHora:W.valid.dataHora,...(W.valid.geo||{})},registradoPor:S.uid||null};
   try{
-    await Store.insert('evidencias',id,{colaboradorId:c.id,entregaId:id,metodo:W.valid.metodo,foto:W.valid.foto||null,assinatura:W.valid.assinatura||null,dataHora:W.valid.dataHora});
+    await Store.insert('evidencias',id,{colaboradorId:c.id,entregaId:id,metodo:W.valid.metodo,foto:W.valid.foto||null,assinatura:W.valid.assinatura||null,dataHora:W.valid.dataHora,...(W.valid.geo||{})});
     await Store.insert('entregas',id,entrega);
     for(const it of itens){try{await Store.baixarEstoque(it.epiId,it.qtd);}catch(e){console.error(e);toast('Entrega registrada, mas não foi possível baixar o estoque de '+it.nome+'.','warn');}}
     delete S.evCache[c.id];
@@ -1143,13 +1184,13 @@ function geralHTML(d){
   <div class="doc-sum"><div><b>${d.ents.length}</b><span>entregas</span></div><div><b>${d.total}</b><span>itens</span></div><div><b>${d.pessoas}</b><span>colaboradores</span></div><div><b>${money(d.custo)}</b><span>custo total</span></div></div>
   <h2>Por EPI</h2><table><thead><tr><th>EPI</th><th>CA</th><th class="r">Quantidade</th><th class="r">Custo</th></tr></thead><tbody>${d.porEpi.map(x=>`<tr><td>${esc(x.nome)}</td><td>${esc(x.ca||'—')}</td><td class="r">${x.qtd}</td><td class="r">${money(x.custo)}</td></tr>`).join('')||'<tr><td colspan="4">Sem entregas no período.</td></tr>'}</tbody></table>
   <h2>Por setor</h2><table><thead><tr><th>Setor</th><th class="r">Colaboradores</th><th class="r">Itens</th><th class="r">Custo</th></tr></thead><tbody>${d.porSetor.map(([s,x])=>`<tr><td>${esc(s)}</td><td class="r">${x.pessoas.size}</td><td class="r">${x.qtd}</td><td class="r">${money(x.custo)}</td></tr>`).join('')||'<tr><td colspan="4">—</td></tr>'}</tbody></table>
-  <h2>Entregas detalhadas</h2><table><thead><tr><th>Data</th><th>Colaborador</th><th>Setor</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>Confirmação</th></tr></thead><tbody>${d.rows.map(({e,it})=>`<tr><td>${fmtDT(e.data)}</td><td>${esc(e.colaboradorNome)}<br><small>Mat. ${esc(e.matricula||'—')}</small></td><td>${esc(e.setor||'—')}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${e.validacao&&e.validacao.metodo==='facial'?'Facial':'Assinatura'}</td></tr>`).join('')||'<tr><td colspan="8">Sem entregas no período.</td></tr>'}</tbody></table>
+  <h2>Entregas detalhadas</h2><table><thead><tr><th>Data</th><th>Colaborador</th><th>Setor</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>Confirmação</th></tr></thead><tbody>${d.rows.map(({e,it})=>`<tr><td>${fmtDT(e.data)}</td><td>${esc(e.colaboradorNome)}<br><small>Mat. ${esc(e.matricula||'—')}</small></td><td>${esc(e.setor||'—')}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${e.validacao&&e.validacao.metodo==='facial'?'Facial':'Assinatura'}${geoLink(e.validacao)}</td></tr>`).join('')||'<tr><td colspan="8">Sem entregas no período.</td></tr>'}</tbody></table>
   <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())} · ${esc(BRAND.nome)}${BRAND.fornecedor?' · '+esc(BRAND.fornecedor):''}</footer></div>`;
 }
 function fichaHTML(c,ents,ev){
   const k=cfg();
   const rows=ents.slice().sort((a,b)=>a.data<b.data?-1:1).map(e=>{const v=ev[e.id]||{};const img=v.foto||v.assinatura;
-    return (e.itens||[]).map((it,i)=>`<tr><td>${i===0?fmtDT(e.data):''}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${it.proximaTroca?fmtDate(it.proximaTroca):'—'}</td>${i===0?`<td rowspan="${e.itens.length}" class="proofc">${img?`<img src="${esc(img)}" alt="">`:''}<div>${e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura na tela'}${e.registradoPor&&S.names[e.registradoPor]?'<br><small>Registrado por '+esc(S.names[e.registradoPor])+'</small>':''}</div></td>`:''}</tr>`).join('');}).join('');
+    return (e.itens||[]).map((it,i)=>`<tr><td>${i===0?fmtDT(e.data):''}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${it.proximaTroca?fmtDate(it.proximaTroca):'—'}</td>${i===0?`<td rowspan="${e.itens.length}" class="proofc">${img?`<img src="${esc(img)}" alt="">`:''}<div>${e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura na tela'}${geoLink(e.validacao)}${e.registradoPor&&S.names[e.registradoPor]?'<br><small>Registrado por '+esc(S.names[e.registradoPor])+'</small>':''}</div></td>`:''}</tr>`).join('');}).join('');
   const K=k;return`<div class="doc"><header class="doc-h"><div class="doc-brand">${K.logo?`<img class="doc-logo" src="${esc(K.logo)}" alt="">`:''}<div><div class="doc-k">Ficha de controle de entrega de EPI · NR-06</div><h1>${esc(k.empresa||'[Preencha a razão social em Configurações]')}</h1><div>${esc([k.cnpj&&'CNPJ '+k.cnpj,k.unidade].filter(Boolean).join(' · '))}</div></div></div>${c.foto?`<img class="doc-photo" src="${esc(c.foto)}" alt="">`:''}</header>
   <table class="doc-id"><tr><th>Colaborador</th><td>${esc(c.nome)}</td><th>Matrícula</th><td>${esc(c.matricula||'—')}</td></tr><tr><th>CPF</th><td>${esc(c.cpf||'—')}</td><th>Admissão</th><td>${fmtDate(c.admissao)}</td></tr><tr><th>Função</th><td>${esc(c.funcao||'—')}</td><th>Setor</th><td>${esc(c.setor||'—')}</td></tr></table>
   <p class="doc-termo"><b>Termo de responsabilidade.</b> ${esc(TERMO)}</p>
@@ -1200,8 +1241,8 @@ function doPrint(inner){
 }
 function csvGeral(){
   const d=geralData();const q=v=>{v=String(v??'');return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
-  const hdr=['Data','Hora','Colaborador','Matrícula','CPF','Setor','Função','EPI','CA','Quantidade','Motivo','Custo unitário','Custo total','Próxima troca','Confirmação','Observação'];
-  const lines=d.rows.map(({e,it})=>{const dt=new Date(e.data);return[dt.toLocaleDateString('pt-BR'),dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),e.colaboradorNome,e.matricula,e.cpf,e.setor,e.funcao,it.nome,it.ca,it.qtd,it.motivo,String((it.custoUnit||0).toFixed(2)).replace('.',','),String((it.qtd*(it.custoUnit||0)).toFixed(2)).replace('.',','),it.proximaTroca?fmtDate(it.proximaTroca):'',e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura',e.obs].map(q).join(';');});
+  const hdr=['Data','Hora','Colaborador','Matrícula','CPF','Setor','Função','EPI','CA','Quantidade','Motivo','Custo unitário','Custo total','Próxima troca','Confirmação','Latitude','Longitude','Precisão (m)','Observação'];
+  const lines=d.rows.map(({e,it})=>{const dt=new Date(e.data);return[dt.toLocaleDateString('pt-BR'),dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),e.colaboradorNome,e.matricula,e.cpf,e.setor,e.funcao,it.nome,it.ca,it.qtd,it.motivo,String((it.custoUnit||0).toFixed(2)).replace('.',','),String((it.qtd*(it.custoUnit||0)).toFixed(2)).replace('.',','),it.proximaTroca?fmtDate(it.proximaTroca):'',e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura',...(e.validacao&&e.validacao.lat!=null?[String(e.validacao.lat).replace('.',','),String(e.validacao.lng).replace('.',','),e.validacao.precisao]:['','','']),e.obs].map(q).join(';');});
   return '\uFEFF'+[hdr.join(';'),...lines].join('\r\n');
 }
 
@@ -1341,8 +1382,13 @@ const ACT={
   'wizard-to3':()=>wizardTo3(),
   'wizard-reset':()=>{W=newWizard();render(true);},
   'val-face':async()=>{const c=colabById(W.colabId);const r=await cameraModal({mode:'verify',colab:c,title:'Confirmar recebimento'});
-    if(!r)return;if(r.fallback){return ACT['val-sig']();}W.valid={metodo:'facial',distancia:r.distancia,foto:r.foto,dataHora:new Date().toISOString()};render(true);},
-  'val-sig':async()=>{const c=colabById(W.colabId);const r=await signatureModal(c);if(r){W.valid={metodo:'assinatura',assinatura:r.assinatura,dataHora:new Date().toISOString()};render(true);}},
+    if(!r)return;if(r.fallback){return ACT['val-sig']();}
+    const when=new Date();toast('Registrando data, hora e localização…');const g=await Geo.get(8000);
+    let foto=r.foto;try{foto=await stampImage(r.foto,when,g);}catch(e){console.error(e);}
+    W.valid={metodo:'facial',distancia:r.distancia,foto,dataHora:when.toISOString(),geo:geoRec(g)};render(true);},
+  'val-sig':async()=>{const c=colabById(W.colabId);const r=await signatureModal(c);if(!r)return;
+    const when=new Date();const g=await Geo.get(8000);let a=r.assinatura;try{a=await stampImage(r.assinatura,when,g,{below:true});}catch(e){console.error(e);}
+    W.valid={metodo:'assinatura',assinatura:a,dataHora:when.toISOString(),geo:geoRec(g)};render(true);},
   'val-clear':()=>{W.valid=null;render(true);},
   'save-delivery':()=>saveDelivery(),
   'rtab':el=>{R.tab=el.dataset.tab;render(true);},
