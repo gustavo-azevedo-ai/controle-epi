@@ -218,6 +218,8 @@ table.t td.r,table.t th.r{text-align:right}
 .epi-card .top b{display:block;font-weight:600}
 .epi-card .meta{display:flex;gap:6px;flex-wrap:wrap}
 .epi-card .opts{display:grid;grid-template-columns:72px 1fr;gap:8px}
+.epi-card .opts .full{grid-column:1/-1;display:grid;gap:4px;margin:0;color:var(--muted)}
+.epi-card .opts .full .input{font-size:15px;font-weight:400;color:var(--ink)}
 .summary-bar{position:sticky;bottom:0;margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow);flex-wrap:wrap}
 @media (max-width:860px){.summary-bar{bottom:78px}}
 .termo{font-size:14px;background:var(--surface-2);border-left:4px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;margin:0}
@@ -341,6 +343,9 @@ const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLo
 const initials=n=>String(n||'?').trim().split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 const byName=(a,b)=>String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR');
 const MOTIVOS=['Admissão / primeira entrega','Troca periódica','Desgaste ou dano','Perda ou extravio','Mudança de função','Outro'];
+const DEVOLUCOES=['Devolvido','Não devolvido','Perdido ou extraviado','Não se aplica'];
+const devPadrao=(motivo,teveAnterior)=>motivo==='Admissão / primeira entrega'?'Não se aplica':motivo==='Perda ou extravio'?'Perdido ou extraviado':teveAnterior?'Devolvido':'Não se aplica';
+const devTxt=it=>esc(it.devolucao||'—');
 const CATEGORIAS=['Proteção da cabeça','Proteção dos olhos e face','Proteção auditiva','Proteção respiratória','Proteção do tronco','Proteção dos membros superiores','Proteção dos membros inferiores','Proteção do corpo inteiro','Proteção contra quedas','Outro'];
 const TERMO='Declaro ter recebido gratuitamente os EPIs relacionados, em perfeito estado, e ter sido orientado sobre seu uso correto. Comprometo-me a usá-los apenas para a finalidade a que se destinam, responsabilizar-me por sua guarda e conservação, comunicar ao empregador qualquer alteração que os torne impróprios para uso e cumprir as determinações sobre seu uso adequado, conforme a NR-06.';
 
@@ -872,7 +877,7 @@ function vPainel(){
   </div>
   <div class="grid g2" style="margin-top:16px">
     <div class="panel"><div class="panel-head"><h2>Trocas vencidas e próximas</h2><span class="small muted">até 7 dias</span></div>
-      ${tv.length?`<div class="table-wrap"><table class="t"><thead><tr><th>Colaborador</th><th>EPI</th><th>Troca</th><th></th></tr></thead><tbody>${tv.slice(0,12).map(t=>`<tr><td><div class="person">${avatar(t.c)}<div><b>${esc(t.c.nome)}</b><span>${esc(t.c.setor||'')}</span></div></div></td><td>${esc(t.p.nome)}</td><td><span class="chip ${t.dias<0?'bad':'warn'}">${t.dias<0?'Venceu há '+(-t.dias)+'d':t.dias===0?'Vence hoje':'Em '+t.dias+'d'}</span></td><td class="r"><button class="btn" data-action="deliver-to" data-id="${t.c.id}" data-epi="${t.p.id}">Entregar</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Nenhuma troca vencida. Os prazos aparecem aqui quando o EPI tem periodicidade de troca cadastrada.</div>'}
+      ${tv.length?`<div class="table-wrap"><table class="t"><thead><tr><th>Colaborador</th><th>EPI e troca</th><th></th></tr></thead><tbody>${tv.slice(0,12).map(t=>`<tr><td><div class="person">${avatar(t.c)}<div><b>${esc(t.c.nome)}</b><span>${esc(t.c.setor||'')}</span></div></div></td><td>${esc(t.p.nome)}<div style="margin-top:4px"><span class="chip ${t.dias<0?'bad':'warn'}">${t.dias<0?'Venceu há '+(-t.dias)+'d':t.dias===0?'Vence hoje':'Em '+t.dias+'d'}</span></div></td><td class="r"><button class="btn" data-action="deliver-to" data-id="${t.c.id}" data-epi="${t.p.id}">Entregar</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Nenhuma troca vencida. Os prazos aparecem aqui quando o EPI tem periodicidade de troca cadastrada.</div>'}
     </div>
     <div class="panel"><div class="panel-head"><h2>Atenção nos EPIs</h2></div>
       ${(low.length||caBad.length)?`<div class="table-wrap"><table class="t"><thead><tr><th>EPI</th><th>Situação</th><th class="r">Estoque</th></tr></thead><tbody>${[...new Set([...caBad,...low])].map(p=>{const ca=caStatus(p);const isLow=low.includes(p);return`<tr class="click" data-action="edit-epi" data-id="${p.id}"><td><b>${esc(p.nome)}</b><div class="small muted">CA ${esc(p.ca||'—')}</div></td><td><div style="display:flex;gap:6px;flex-wrap:wrap">${ca&&ca.level!=='ok'?`<span class="chip ${ca.level}">${ca.text}</span>`:''}${isLow?'<span class="chip warn">Estoque baixo</span>':''}</div></td><td class="r num">${Number(p.estoque||0)}</td></tr>`;}).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Estoques e CAs em dia.</div>'}
@@ -918,7 +923,7 @@ function vColab(id){
       <dt class="muted">Unidade</dt><dd style="margin:0">${esc(c.unidade||'—')}</dd><dt class="muted">Biometria</dt><dd style="margin:0">${bio?`Autorizada em ${fmtDate(c.consentimentoEm)}`:'Não cadastrada'}</dd></dl></div>
   </div>
   <div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Histórico de entregas</h2><span class="small muted">${ents.length} registro${ents.length===1?'':'s'}</span></div>
-  ${ents.length?`<div class="table-wrap"><table class="t"><thead><tr><th>Data</th><th>EPIs</th><th>Motivo</th><th>Confirmação</th></tr></thead><tbody>${ents.map(e=>`<tr><td>${fmtDT(e.data)}</td><td>${(e.itens||[]).map(i=>`${esc(i.qtd)}× ${esc(i.nome)} <span class="muted small">CA ${esc(i.ca||'—')}</span>`).join('<br>')}</td><td class="small">${[...new Set((e.itens||[]).map(i=>i.motivo))].map(esc).join(', ')}</td><td>${valChip(e.validacao)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Sem entregas.</div>'}</div>`;
+  ${ents.length?`<div class="table-wrap"><table class="t"><thead><tr><th>Data</th><th>EPIs</th><th>Motivo</th><th>EPI anterior</th><th>Confirmação</th></tr></thead><tbody>${ents.map(e=>`<tr><td>${fmtDT(e.data)}</td><td>${(e.itens||[]).map(i=>`${esc(i.qtd)}× ${esc(i.nome)} <span class="muted small">CA ${esc(i.ca||'—')}</span>`).join('<br>')}</td><td class="small">${[...new Set((e.itens||[]).map(i=>i.motivo))].map(esc).join(', ')}</td><td class="small">${[...new Set((e.itens||[]).map(i=>i.devolucao).filter(Boolean))].map(esc).join(', ')||'—'}</td><td>${valChip(e.validacao)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="panel-pad muted">Sem entregas.</div>'}</div>`;
 }
 function valChip(v){if(!v)return'<span class="chip">—</span>';return v.metodo==='facial'?'<span class="chip ok">Reconhecimento facial</span>':'<span class="chip">Assinatura na tela</span>';}
 
@@ -1082,8 +1087,8 @@ function newWizard(){return{step:1,colabId:null,via:null,itens:{},obs:'',valid:n
 function startDelivery(colabId,epiId){
   W=newWizard();W.colabId=colabId;W.step=2;
   const due=dueFor(colabId);
-  for(const [eid,r] of Object.entries(due)){const p=epiById(eid);if(p&&p.ativo!==false&&r.dias!=null&&r.dias<=0)W.itens[eid]={qtd:1,motivo:'Troca periódica'};}
-  if(epiId&&!W.itens[epiId])W.itens[epiId]={qtd:1,motivo:'Troca periódica'};
+  for(const [eid,r] of Object.entries(due)){const p=epiById(eid);if(p&&p.ativo!==false&&r.dias!=null&&r.dias<=0)W.itens[eid]={qtd:1,motivo:'Troca periódica',devolucao:'Devolvido'};}
+  if(epiId&&!W.itens[epiId])W.itens[epiId]={qtd:1,motivo:'Troca periódica',devolucao:'Devolvido'};
   if(location.hash==='#entrega')render(true);else location.hash='#entrega';
 }
 function vEntrega(){
@@ -1109,7 +1114,7 @@ function vEntrega(){
     (epis.length?`<div class="epi-grid">${epis.map(p=>{const sel=W.itens[p.id];const ca=caStatus(p);const d=due[p.id];const est=Number(p.estoque||0);
       return`<div class="epi-card ${sel?'sel':''}"><label class="check top"><input type="checkbox" data-action="toggle-epi" data-id="${p.id}" ${sel?'checked':''}><span><b>${esc(p.nome)}</b><span class="small muted">CA ${esc(p.ca||'—')}${p.descricao?' · '+esc(p.descricao):''}</span></span></label>
       <div class="meta">${ca&&ca.level!=='ok'?`<span class="chip ${ca.level}">${ca.text}</span>`:''}${d&&d.dias!=null?(d.dias<=0?`<span class="chip bad">Troca vencida</span>`:d.dias<=7?`<span class="chip warn">Troca em ${d.dias}d</span>`:''):''}${d?`<span class="chip">Recebeu em ${fmtDate(d.ultima)}</span>`:''}<span class="chip ${est<=0?'bad':est<=Number(p.estoqueMinimo||0)?'warn':''}">Estoque ${est}</span></div>
-      ${sel?`<div class="opts"><input class="input" type="number" min="1" step="1" value="${esc(sel.qtd)}" data-qtd="${p.id}" aria-label="Quantidade"><select class="input" data-motivo="${p.id}" aria-label="Motivo">${MOTIVOS.map(mo=>`<option ${sel.motivo===mo?'selected':''}>${mo}</option>`).join('')}</select></div>`:''}</div>`;}).join('')}</div>
+      ${sel?`<div class="opts"><input class="input" type="number" min="1" step="1" value="${esc(sel.qtd)}" data-qtd="${p.id}" aria-label="Quantidade"><select class="input" data-motivo="${p.id}" aria-label="Motivo">${MOTIVOS.map(mo=>`<option ${sel.motivo===mo?'selected':''}>${mo}</option>`).join('')}</select><label class="full">Devolução do EPI anterior<select class="input" data-dev="${p.id}">${DEVOLUCOES.map(dv=>`<option ${sel.devolucao===dv?'selected':''}>${dv}</option>`).join('')}</select></label></div>`:''}</div>`;}).join('')}</div>
     <div class="field" style="margin-top:16px"><label for="w-obs">Observação (opcional)</label><input class="input" id="w-obs" value="${esc(W.obs)}" placeholder="Ex.: luva anterior rasgou na filetagem"></div>
     <div class="summary-bar"><span><b class="num">${nSel}</b> EPI${nSel===1?'':'s'} selecionado${nSel===1?'':'s'}</span><button class="btn btn-primary btn-lg" data-action="wizard-to3" ${nSel?'':'disabled'}>Continuar para confirmação</button></div>`
     :`<div class="panel"><div class="empty"><h3>Nenhum EPI ativo</h3><p>Cadastre os EPIs antes de registrar a entrega.</p><div class="actions"><button class="btn btn-primary" data-action="new-epi">${I.plus} Novo EPI</button></div></div></div>`);
@@ -1118,7 +1123,7 @@ function vEntrega(){
   const itens=Object.entries(W.itens).map(([id,v])=>({p:epiById(id),...v})).filter(x=>x.p);
   const hasBio=(c.faceDescriptors||[]).length>0;
   return head('Nova entrega','O colaborador confirma o recebimento.')+steps+who+
-  `<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Itens</h2><button class="btn" data-action="wizard-back2">Alterar</button></div><div class="table-wrap"><table class="t"><thead><tr><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th></tr></thead><tbody>${itens.map(x=>`<tr><td>${esc(x.p.nome)}</td><td>${esc(x.p.ca||'—')}</td><td class="r num">${esc(x.qtd)}</td><td class="small">${esc(x.motivo)}</td></tr>`).join('')}</tbody></table></div>
+  `<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Itens</h2><button class="btn" data-action="wizard-back2">Alterar</button></div><div class="table-wrap"><table class="t"><thead><tr><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>EPI anterior</th></tr></thead><tbody>${itens.map(x=>`<tr><td>${esc(x.p.nome)}</td><td>${esc(x.p.ca||'—')}</td><td class="r num">${esc(x.qtd)}</td><td class="small">${esc(x.motivo)}</td><td class="small">${devTxt(x)}</td></tr>`).join('')}</tbody></table></div>
   <div class="panel-pad"><p class="termo">${esc(TERMO)}</p></div></div>
   <div class="panel panel-pad">${W.valid?`<h2 style="margin-bottom:12px">Recebimento confirmado</h2><div class="proof">${W.valid.foto?`<img src="${esc(W.valid.foto)}" alt="Foto da confirmação">`:''}${W.valid.assinatura?`<img src="${esc(W.valid.assinatura)}" alt="Assinatura">`:''}<div>${valChip(W.valid)}<div class="small muted" style="margin-top:6px">${fmtDT(W.valid.dataHora)}${geoLink(W.valid.geo)}${W.valid.distancia!=null?`<br>Distância facial ${String(W.valid.distancia).replace('.',',')} (limite ${String(cfg().limiar).replace('.',',')})`:''}</div></div></div>
     <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap"><button class="btn" data-action="val-clear">Refazer confirmação</button><button class="btn btn-primary btn-lg" data-action="save-delivery" ${W.saving?'disabled':''}>${W.saving?'Registrando…':'Registrar entrega'}</button></div>`
@@ -1134,7 +1139,9 @@ AFTER.entrega=()=>{
     el.style.color=g.lat!=null?'var(--ok)':'var(--warn)';});}
   const q=$('#q-pick');if(q)q.addEventListener('input',()=>{const v=norm(q.value);$$('.pick-row').forEach(r=>r.hidden=!!v&&!r.dataset.s.includes(v));});
   $$('[data-qtd]').forEach(el=>el.addEventListener('input',()=>{const it=W.itens[el.dataset.qtd];if(it)it.qtd=Math.max(1,parseInt(el.value)||1);}));
-  $$('[data-motivo]').forEach(el=>el.addEventListener('change',()=>{const it=W.itens[el.dataset.motivo];if(it)it.motivo=el.value;}));
+  $$('[data-motivo]').forEach(el=>el.addEventListener('change',()=>{const id=el.dataset.motivo,it=W.itens[id];if(!it)return;it.motivo=el.value;
+    if(!it.devManual){it.devolucao=devPadrao(it.motivo,!!dueFor(W.colabId)[id]);const dv=$(`[data-dev="${id}"]`);if(dv)dv.value=it.devolucao;}}));
+  $$('[data-dev]').forEach(el=>el.addEventListener('change',()=>{const it=W.itens[el.dataset.dev];if(it){it.devolucao=el.value;it.devManual=true;}}));
   const o=$('#w-obs');if(o)o.addEventListener('input',()=>W.obs=o.value);
 };
 async function wizardTo3(){
@@ -1149,7 +1156,7 @@ async function saveDelivery(){
   const c=colabById(W.colabId);if(!c||!W.valid||W.saving)return;
   W.saving=true;render(true);
   const id=newId(),now=new Date().toISOString();
-  const itens=Object.entries(W.itens).map(([eid,v])=>{const p=epiById(eid);return p?{epiId:eid,nome:p.nome,ca:p.ca||'',qtd:Number(v.qtd)||1,motivo:v.motivo,custoUnit:Number(p.custoUnit)||0,proximaTroca:Number(p.periodicidadeDias)?addDays(now,p.periodicidadeDias):null}:null;}).filter(Boolean);
+  const itens=Object.entries(W.itens).map(([eid,v])=>{const p=epiById(eid);return p?{epiId:eid,nome:p.nome,ca:p.ca||'',qtd:Number(v.qtd)||1,motivo:v.motivo,devolucao:v.devolucao||'Não se aplica',custoUnit:Number(p.custoUnit)||0,proximaTroca:Number(p.periodicidadeDias)?addDays(now,p.periodicidadeDias):null}:null;}).filter(Boolean);
   const entrega={colaboradorId:c.id,colaboradorNome:c.nome,matricula:c.matricula||'',cpf:c.cpf||'',setor:c.setor||'',funcao:c.funcao||'',data:now,itens,obs:W.obs||'',
     validacao:{metodo:W.valid.metodo,distancia:W.valid.distancia??null,dataHora:W.valid.dataHora,...(W.valid.geo||{})},registradoPor:S.uid||null};
   try{
@@ -1184,17 +1191,17 @@ function geralHTML(d){
   <div class="doc-sum"><div><b>${d.ents.length}</b><span>entregas</span></div><div><b>${d.total}</b><span>itens</span></div><div><b>${d.pessoas}</b><span>colaboradores</span></div><div><b>${money(d.custo)}</b><span>custo total</span></div></div>
   <h2>Por EPI</h2><table><thead><tr><th>EPI</th><th>CA</th><th class="r">Quantidade</th><th class="r">Custo</th></tr></thead><tbody>${d.porEpi.map(x=>`<tr><td>${esc(x.nome)}</td><td>${esc(x.ca||'—')}</td><td class="r">${x.qtd}</td><td class="r">${money(x.custo)}</td></tr>`).join('')||'<tr><td colspan="4">Sem entregas no período.</td></tr>'}</tbody></table>
   <h2>Por setor</h2><table><thead><tr><th>Setor</th><th class="r">Colaboradores</th><th class="r">Itens</th><th class="r">Custo</th></tr></thead><tbody>${d.porSetor.map(([s,x])=>`<tr><td>${esc(s)}</td><td class="r">${x.pessoas.size}</td><td class="r">${x.qtd}</td><td class="r">${money(x.custo)}</td></tr>`).join('')||'<tr><td colspan="4">—</td></tr>'}</tbody></table>
-  <h2>Entregas detalhadas</h2><table><thead><tr><th>Data</th><th>Colaborador</th><th>Setor</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>Confirmação</th></tr></thead><tbody>${d.rows.map(({e,it})=>`<tr><td>${fmtDT(e.data)}</td><td>${esc(e.colaboradorNome)}<br><small>Mat. ${esc(e.matricula||'—')}</small></td><td>${esc(e.setor||'—')}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${e.validacao&&e.validacao.metodo==='facial'?'Facial':'Assinatura'}${geoLink(e.validacao)}</td></tr>`).join('')||'<tr><td colspan="8">Sem entregas no período.</td></tr>'}</tbody></table>
+  <h2>Entregas detalhadas</h2><table><thead><tr><th>Data</th><th>Colaborador</th><th>Setor</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>EPI anterior</th><th>Confirmação</th></tr></thead><tbody>${d.rows.map(({e,it})=>`<tr><td>${fmtDT(e.data)}</td><td>${esc(e.colaboradorNome)}<br><small>Mat. ${esc(e.matricula||'—')}</small></td><td>${esc(e.setor||'—')}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${devTxt(it)}</td><td>${e.validacao&&e.validacao.metodo==='facial'?'Facial':'Assinatura'}${geoLink(e.validacao)}</td></tr>`).join('')||'<tr><td colspan="9">Sem entregas no período.</td></tr>'}</tbody></table>
   <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())} · ${esc(BRAND.nome)}${BRAND.fornecedor?' · '+esc(BRAND.fornecedor):''}</footer></div>`;
 }
 function fichaHTML(c,ents,ev){
   const k=cfg();
   const rows=ents.slice().sort((a,b)=>a.data<b.data?-1:1).map(e=>{const v=ev[e.id]||{};const img=v.foto||v.assinatura;
-    return (e.itens||[]).map((it,i)=>`<tr><td>${i===0?fmtDT(e.data):''}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${it.proximaTroca?fmtDate(it.proximaTroca):'—'}</td>${i===0?`<td rowspan="${e.itens.length}" class="proofc">${img?`<img src="${esc(img)}" alt="">`:''}<div>${e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura na tela'}${geoLink(e.validacao)}${e.registradoPor&&S.names[e.registradoPor]?'<br><small>Registrado por '+esc(S.names[e.registradoPor])+'</small>':''}</div></td>`:''}</tr>`).join('');}).join('');
+    return (e.itens||[]).map((it,i)=>`<tr><td>${i===0?fmtDT(e.data):''}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${devTxt(it)}</td><td>${it.proximaTroca?fmtDate(it.proximaTroca):'—'}</td>${i===0?`<td rowspan="${e.itens.length}" class="proofc">${img?`<img src="${esc(img)}" alt="">`:''}<div>${e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura na tela'}${geoLink(e.validacao)}${e.registradoPor&&S.names[e.registradoPor]?'<br><small>Registrado por '+esc(S.names[e.registradoPor])+'</small>':''}</div></td>`:''}</tr>`).join('');}).join('');
   const K=k;return`<div class="doc"><header class="doc-h"><div class="doc-brand">${K.logo?`<img class="doc-logo" src="${esc(K.logo)}" alt="">`:''}<div><div class="doc-k">Ficha de controle de entrega de EPI · NR-06</div><h1>${esc(k.empresa||'[Preencha a razão social em Configurações]')}</h1><div>${esc([k.cnpj&&'CNPJ '+k.cnpj,k.unidade].filter(Boolean).join(' · '))}</div></div></div>${c.foto?`<img class="doc-photo" src="${esc(c.foto)}" alt="">`:''}</header>
   <table class="doc-id"><tr><th>Colaborador</th><td>${esc(c.nome)}</td><th>Matrícula</th><td>${esc(c.matricula||'—')}</td></tr><tr><th>CPF</th><td>${esc(c.cpf||'—')}</td><th>Admissão</th><td>${fmtDate(c.admissao)}</td></tr><tr><th>Função</th><td>${esc(c.funcao||'—')}</td><th>Setor</th><td>${esc(c.setor||'—')}</td></tr></table>
   <p class="doc-termo"><b>Termo de responsabilidade.</b> ${esc(TERMO)}</p>
-  <table><thead><tr><th>Data</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>Próx. troca</th><th>Confirmação do colaborador</th></tr></thead><tbody>${rows||'<tr><td colspan="7">Nenhuma entrega registrada.</td></tr>'}</tbody></table>
+  <table><thead><tr><th>Data</th><th>EPI</th><th>CA</th><th class="r">Qtd</th><th>Motivo</th><th>Devolução do EPI anterior</th><th>Próx. troca</th><th>Confirmação do colaborador</th></tr></thead><tbody>${rows||'<tr><td colspan="8">Nenhuma entrega registrada.</td></tr>'}</tbody></table>
   <div class="doc-sign"><div>${esc(k.responsavel||'')}<br><span>${esc(k.cargoResponsavel||'Responsável pela entrega / SESMT')}</span></div></div>
   <footer class="doc-f">Gerado em ${fmtDT(new Date().toISOString())} · ${ents.length} entrega(s) registrada(s) · ${esc(BRAND.nome)}${BRAND.fornecedor?' · '+esc(BRAND.fornecedor):''}</footer></div>`;
 }
@@ -1241,8 +1248,8 @@ function doPrint(inner){
 }
 function csvGeral(){
   const d=geralData();const q=v=>{v=String(v??'');return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
-  const hdr=['Data','Hora','Colaborador','Matrícula','CPF','Setor','Função','EPI','CA','Quantidade','Motivo','Custo unitário','Custo total','Próxima troca','Confirmação','Latitude','Longitude','Precisão (m)','Observação'];
-  const lines=d.rows.map(({e,it})=>{const dt=new Date(e.data);return[dt.toLocaleDateString('pt-BR'),dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),e.colaboradorNome,e.matricula,e.cpf,e.setor,e.funcao,it.nome,it.ca,it.qtd,it.motivo,String((it.custoUnit||0).toFixed(2)).replace('.',','),String((it.qtd*(it.custoUnit||0)).toFixed(2)).replace('.',','),it.proximaTroca?fmtDate(it.proximaTroca):'',e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura',...(e.validacao&&e.validacao.lat!=null?[String(e.validacao.lat).replace('.',','),String(e.validacao.lng).replace('.',','),e.validacao.precisao]:['','','']),e.obs].map(q).join(';');});
+  const hdr=['Data','Hora','Colaborador','Matrícula','CPF','Setor','Função','EPI','CA','Quantidade','Motivo','Devolução do EPI anterior','Custo unitário','Custo total','Próxima troca','Confirmação','Latitude','Longitude','Precisão (m)','Observação'];
+  const lines=d.rows.map(({e,it})=>{const dt=new Date(e.data);return[dt.toLocaleDateString('pt-BR'),dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),e.colaboradorNome,e.matricula,e.cpf,e.setor,e.funcao,it.nome,it.ca,it.qtd,it.motivo,it.devolucao||'',String((it.custoUnit||0).toFixed(2)).replace('.',','),String((it.qtd*(it.custoUnit||0)).toFixed(2)).replace('.',','),it.proximaTroca?fmtDate(it.proximaTroca):'',e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura',...(e.validacao&&e.validacao.lat!=null?[String(e.validacao.lat).replace('.',','),String(e.validacao.lng).replace('.',','),e.validacao.precisao]:['','','']),e.obs].map(q).join(';');});
   return '\uFEFF'+[hdr.join(';'),...lines].join('\r\n');
 }
 
@@ -1374,9 +1381,9 @@ const ACT={
   'edit-epi':el=>{const p=epiById(el.dataset.id);if(p)epiForm(p);},
   'stock-in':(el,e)=>{e.stopPropagation();const p=epiById(el.dataset.id);if(p)stockIn(p);},
   'deliver-to':el=>startDelivery(el.dataset.id,el.dataset.epi),
-  'pick-colab':el=>{W.colabId=el.dataset.id;W.via='busca';W.itens={};const due=dueFor(W.colabId);for(const [eid,r] of Object.entries(due)){const p=epiById(eid);if(p&&p.ativo!==false&&r.dias!=null&&r.dias<=0)W.itens[eid]={qtd:1,motivo:'Troca periódica'};}W.step=2;render(true);window.scrollTo(0,0);},
-  'identify':async()=>{const r=await cameraModal({mode:'identify',title:'Identificar colaborador'});if(r&&r.colab){W.colabId=r.colab.id;W.via='facial';W.itens={};const due=dueFor(W.colabId);for(const [eid,x] of Object.entries(due)){const p=epiById(eid);if(p&&p.ativo!==false&&x.dias!=null&&x.dias<=0)W.itens[eid]={qtd:1,motivo:'Troca periódica'};}W.step=2;toast('Identificado: '+r.colab.nome);render(true);}},
-  'toggle-epi':el=>{const id=el.dataset.id;if(W.itens[id])delete W.itens[id];else{const d=dueFor(W.colabId)[id];W.itens[id]={qtd:1,motivo:d?(d.dias!=null&&d.dias<=0?'Troca periódica':'Desgaste ou dano'):'Admissão / primeira entrega'};}render(true);},
+  'pick-colab':el=>{W.colabId=el.dataset.id;W.via='busca';W.itens={};const due=dueFor(W.colabId);for(const [eid,r] of Object.entries(due)){const p=epiById(eid);if(p&&p.ativo!==false&&r.dias!=null&&r.dias<=0)W.itens[eid]={qtd:1,motivo:'Troca periódica',devolucao:'Devolvido'};}W.step=2;render(true);window.scrollTo(0,0);},
+  'identify':async()=>{const r=await cameraModal({mode:'identify',title:'Identificar colaborador'});if(r&&r.colab){W.colabId=r.colab.id;W.via='facial';W.itens={};const due=dueFor(W.colabId);for(const [eid,x] of Object.entries(due)){const p=epiById(eid);if(p&&p.ativo!==false&&x.dias!=null&&x.dias<=0)W.itens[eid]={qtd:1,motivo:'Troca periódica',devolucao:'Devolvido'};}W.step=2;toast('Identificado: '+r.colab.nome);render(true);}},
+  'toggle-epi':el=>{const id=el.dataset.id;if(W.itens[id])delete W.itens[id];else{const d=dueFor(W.colabId)[id];const mo=d?(d.dias!=null&&d.dias<=0?'Troca periódica':'Desgaste ou dano'):'Admissão / primeira entrega';W.itens[id]={qtd:1,motivo:mo,devolucao:devPadrao(mo,!!d)};}render(true);},
   'wizard-back1':()=>{W=newWizard();render(true);},
   'wizard-back2':()=>{W.step=2;W.valid=null;render(true);},
   'wizard-to3':()=>wizardTo3(),
@@ -1418,24 +1425,25 @@ function demoSignature(seed){
   x.beginPath();x.moveTo(70,110);x.lineTo(380,104);x.stroke();return c.toDataURL('image/jpeg',.7);
 }
 function demoSeed(){
-  if(localStorage.getItem(LS_PREFIX+'seeded'))return;
+  if(localStorage.getItem(LS_PREFIX+'seeded')==='3')return;
   const put=(col,obj)=>{const all={};obj.forEach(o=>{const{id,...v}=o;all[id]=v;});localStorage.setItem(LS_PREFIX+col,JSON.stringify(all));};
-  const day=86400000,now=Date.now(),iso=t=>new Date(t).toISOString(),dISO=t=>new Date(t).toISOString().slice(0,10);
+  const day=86400000,now=Date.now(),hoje0=new Date().setHours(0,0,0,0),iso=t=>new Date(t).toISOString(),dISO=t=>new Date(t).toISOString().slice(0,10);
   put('config',[{id:'app',empresa:'Frigorífico Modelo Alimentos Ltda',nomeCurto:'Frigorífico Modelo',cnpj:'11.222.333/0001-81',unidade:'Unidade Demonstração – MG',responsavel:'Ana Paula Ribeiro',cargoResponsavel:'Técnica de Segurança do Trabalho',encarregado:'lgpd@frigorificomodelo.com.br',limiar:0.5}]);
   const E=[['e1','Luva de malha de aço','12451','Proteção dos membros superiores',365,3,20,4,189.9],['e2','Luva nitrílica cano longo','38210','Proteção dos membros superiores',15,90,40,60,9.8],['e3','Bota de PVC branca cano longo','42077','Proteção dos membros inferiores',180,20,-3,8,54.9],['e4','Avental de PVC impermeável','29874','Proteção do tronco',60,45,4,10,32.5],['e5','Protetor auricular tipo plug','5745','Proteção auditiva',30,300,200,100,1.9],['e6','Japona térmica para câmara fria','40121','Proteção do tronco',365,25,90,6,219],['e7','Óculos de proteção incolor','10346','Proteção dos olhos e face',180,35,500,10,12.4],['e8','Touca árabe (capuz)','33415','Proteção da cabeça',90,60,300,20,6.5]];
   put('epis',E.map(([id,nome,ca,categoria,per,est,caDias,min,custo])=>({id,nome,ca,categoria,periodicidadeDias:per,estoque:est,estoqueMinimo:min,custoUnit:custo,validadeCA:dISO(now+caDias*day),fabricante:'',descricao:'',ativo:true})));
   const P=[['Adriano Costa','Filetagem','Operador de filetagem'],['Bruna Martins','Filetagem','Operadora de filetagem'],['Carlos Eduardo Lima','Recepção','Auxiliar de produção'],['Daniela Souza','Embalagem','Auxiliar de embalagem'],['Edson Pereira','Câmara fria','Operador de câmara fria'],['Fernanda Alves','Embalagem','Auxiliar de embalagem'],['Gilberto Nunes','Manutenção','Mecânico industrial'],['Helena Rocha','Filetagem','Operadora de filetagem'],['Igor Fernandes','Recepção','Auxiliar de produção'],['Juliana Teixeira','Qualidade','Analista de qualidade'],['Lucas Barbosa','Câmara fria','Operador de empilhadeira'],['Márcia Gomes','Embalagem','Líder de embalagem']];
-  const C=P.map(([nome,setor,funcao],i)=>({id:'c'+(i+1),nome,setor,funcao,matricula:String(1101+i),cpf:'',unidade:'Unidade Demonstração – MG',admissao:dISO(now-(400+i*37)*day),ativo:true}));
+  const t0=i=>175-(i*5)%40;
+  const C=P.map(([nome,setor,funcao],i)=>({id:'c'+(i+1),nome,setor,funcao,matricula:String(1101+i),cpf:'',unidade:'Unidade Demonstração – MG',admissao:dISO(hoje0-t0(i)*day),ativo:true}));
   put('colaboradores',C);
   const kit={Filetagem:['e1','e2','e3','e4','e5','e8'],Recepção:['e2','e3','e4','e5','e8'],Embalagem:['e2','e3','e5','e8'],'Câmara fria':['e3','e5','e6','e8'],Manutenção:['e3','e5','e7'],Qualidade:['e3','e8']};
   const ents=[],evs=[];let n=0;
   C.forEach((c,ci)=>{const k=kit[c.setor]||['e3'];
-    for(let t=175;t>0;t-=18+((ci*7+t)%11)){const pick=k.filter((_,j)=>(t+j+ci)%3!==0).slice(0,3);if(!pick.length)continue;
-      const when=now-t*day+(8+ci%6)*3600000;const id='d'+(++n);
-      const itens=pick.map(eid=>{const e=E.find(x=>x[0]===eid);return{epiId:eid,nome:e[1],ca:e[2],qtd:eid==='e2'||eid==='e5'?2:1,motivo:t>160?'Admissão / primeira entrega':'Troca periódica',custoUnit:e[8],proximaTroca:new Date(when+e[4]*day).toISOString()};});
+    for(let t=t0(ci);t>0;t-=18+((ci*7+t)%11)){const adm=t===t0(ci);const pick=adm?k:k.filter((_,j)=>(t+j+ci)%3!==0).slice(0,3);if(!pick.length)continue;
+      const when=hoje0-t*day+(7+ci%6)*3600000+((ci*13+t*7)%50)*60000;const id='d'+(++n);
+      const itens=pick.map(eid=>{const e=E.find(x=>x[0]===eid);return{epiId:eid,nome:e[1],ca:e[2],qtd:eid==='e2'||eid==='e5'?2:1,motivo:adm?'Admissão / primeira entrega':'Troca periódica',devolucao:adm?'Não se aplica':'Devolvido',custoUnit:e[8],proximaTroca:new Date(when+e[4]*day).toISOString()};});
       ents.push({id,colaboradorId:c.id,colaboradorNome:c.nome,matricula:c.matricula,cpf:'',setor:c.setor,funcao:c.funcao,data:iso(when),itens,obs:'',validacao:{metodo:'assinatura',distancia:null,dataHora:iso(when)},registradoPor:null});
       evs.push({id,colaboradorId:c.id,entregaId:id,metodo:'assinatura',foto:null,assinatura:demoSignature(n),dataHora:iso(when)});}});
-  put('entregas',ents);put('evidencias',evs);localStorage.setItem(LS_PREFIX+'seeded','1');
+  put('entregas',ents);put('evidencias',evs);localStorage.setItem(LS_PREFIX+'seeded','3');
 }
 
 /* ---------- login (Supabase) ---------- */
