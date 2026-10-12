@@ -940,7 +940,7 @@ function colabForm(c){
     <div class="field"><label for="f-fun">Função</label><input class="input" id="f-fun" name="funcao" list="dl-fun" value="${esc(c.funcao||'')}"><datalist id="dl-fun">${funcoes.map(s=>`<option value="${esc(s)}">`).join('')}</datalist></div>
     <div class="field"><label for="f-set">Setor</label><input class="input" id="f-set" name="setor" list="dl-set" value="${esc(c.setor||'')}"><datalist id="dl-set">${setores.map(s=>`<option value="${esc(s)}">`).join('')}</datalist></div>
     <div class="field"><label for="f-uni">Unidade</label><input class="input" id="f-uni" name="unidade" value="${esc(c.unidade||cfg().unidade||'')}"></div>
-    <div class="field"><label for="f-adm">Admissão</label><input class="input" type="date" id="f-adm" name="admissao" value="${esc(c.admissao||'')}"></div>
+    <div class="field"><label for="f-adm">Admissão</label><input class="input" type="date" max="9999-12-31" id="f-adm" name="admissao" value="${esc(c.admissao||'')}"></div>
     <div class="section-title">Biometria facial</div>
     <label class="check full"><input type="checkbox" name="consent" id="f-consent" ${c.consentimentoEm?'checked':''}><span>O colaborador assinou o termo de consentimento para uso da biometria facial (LGPD art. 11). O termo pode ser impresso na página do colaborador, no botão Termo LGPD.</span></label>
     <div class="full" id="bio-box"></div>
@@ -1016,7 +1016,7 @@ function epiForm(p){
   <div class="modal-body"><div class="form">
     <div class="field full"><label for="e-nome">Nome do EPI</label><input class="input" id="e-nome" name="nome" required placeholder="Ex.: Luva nitrílica cano longo" value="${esc(p.nome||'')}"></div>
     <div class="field"><label for="e-ca">Número do CA</label><input class="input" id="e-ca" name="ca" inputmode="numeric" value="${esc(p.ca||'')}"></div>
-    <div class="field"><label for="e-val">Validade do CA</label><input class="input" type="date" id="e-val" name="validadeCA" value="${esc(p.validadeCA||'')}"></div>
+    <div class="field"><label for="e-val">Validade do CA</label><input class="input" type="date" max="9999-12-31" id="e-val" name="validadeCA" value="${esc(p.validadeCA||'')}"></div>
     <div class="field"><label for="e-fab">Fabricante</label><input class="input" id="e-fab" name="fabricante" value="${esc(p.fabricante||'')}"></div>
     <div class="field"><label for="e-cat">Categoria</label><select class="input" id="e-cat" name="categoria">${CATEGORIAS.map(c=>`<option ${p.categoria===c?'selected':''}>${c}</option>`).join('')}</select></div>
     <div class="field full"><label for="e-desc">Descrição / tamanho</label><input class="input" id="e-desc" name="descricao" placeholder="Ex.: tamanho G, cor branca" value="${esc(p.descricao||'')}"></div>
@@ -1198,7 +1198,7 @@ function geralHTML(d){
 function fichaHTML(c,ents,ev){
   const k=cfg();
   const rows=ents.slice().sort((a,b)=>a.data<b.data?-1:1).map(e=>{const v=ev[e.id]||{};const img=v.foto||v.assinatura;
-    return (e.itens||[]).map((it,i)=>`<tr><td>${i===0?fmtDT(e.data):''}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${devTxt(it)}</td><td>${it.proximaTroca?fmtDate(it.proximaTroca):'—'}</td>${i===0?`<td rowspan="${e.itens.length}" class="proofc">${img?`<img src="${esc(img)}" alt="">`:''}<div>${e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura na tela'}${geoLink(e.validacao)}${e.registradoPor&&S.names[e.registradoPor]?'<br><small>Registrado por '+esc(S.names[e.registradoPor])+'</small>':''}</div></td>`:''}</tr>`).join('');}).join('');
+    return (e.itens||[]).map((it,i)=>`<tr><td>${fmtDT(e.data)}</td><td>${esc(it.nome)}</td><td>${esc(it.ca||'—')}</td><td class="r">${it.qtd}</td><td>${esc(it.motivo)}</td><td>${devTxt(it)}</td><td>${it.proximaTroca?fmtDate(it.proximaTroca):'—'}</td>${i===0?`<td rowspan="${e.itens.length}" class="proofc">${img?`<img src="${esc(img)}" alt="">`:''}<div>${e.validacao&&e.validacao.metodo==='facial'?'Reconhecimento facial':'Assinatura na tela'}${geoLink(e.validacao)}${e.registradoPor&&S.names[e.registradoPor]?'<br><small>Registrado por '+esc(S.names[e.registradoPor])+'</small>':''}</div></td>`:''}</tr>`).join('');}).join('');
   const K=k;return`<div class="doc"><header class="doc-h"><div class="doc-brand">${K.logo?`<img class="doc-logo" src="${esc(K.logo)}" alt="">`:''}<div><div class="doc-k">Ficha de controle de entrega de EPI · NR-06</div><h1>${esc(k.empresa||'[Preencha a razão social em Configurações]')}</h1><div>${esc([k.cnpj&&'CNPJ '+k.cnpj,k.unidade].filter(Boolean).join(' · '))}</div></div></div>${c.foto?`<img class="doc-photo" src="${esc(c.foto)}" alt="">`:''}</header>
   <table class="doc-id"><tr><th>Colaborador</th><td>${esc(c.nome)}</td><th>Matrícula</th><td>${esc(c.matricula||'—')}</td></tr><tr><th>CPF</th><td>${esc(c.cpf||'—')}</td><th>Admissão</th><td>${fmtDate(c.admissao)}</td></tr><tr><th>Função</th><td>${esc(c.funcao||'—')}</td><th>Setor</th><td>${esc(c.setor||'—')}</td></tr></table>
   <p class="doc-termo"><b>Termo de responsabilidade.</b> ${esc(TERMO)}</p>
@@ -1214,8 +1214,8 @@ function vRelatorios(){
     const setores=[...new Set(S.colabs.map(c=>c.setor).filter(Boolean))].sort();const d=geralData();
     return head('Relatórios','Entregas por período, setor e EPI.')+tabs+
     `<div class="panel" style="margin-bottom:16px"><div class="toolbar">
-      <div class="field"><label for="r-de">De</label><input class="input" type="date" id="r-de" value="${R.de}"></div>
-      <div class="field"><label for="r-ate">Até</label><input class="input" type="date" id="r-ate" value="${R.ate}"></div>
+      <div class="field"><label for="r-de">De</label><input class="input" type="date" max="9999-12-31" id="r-de" value="${R.de}"></div>
+      <div class="field"><label for="r-ate">Até</label><input class="input" type="date" max="9999-12-31" id="r-ate" value="${R.ate}"></div>
       <div class="field"><label for="r-set">Setor</label><select class="input" id="r-set"><option value="">Todos</option>${setores.map(s=>`<option ${R.setor===s?'selected':''}>${esc(s)}</option>`).join('')}</select></div>
       <div class="field"><label for="r-epi">EPI</label><select class="input" id="r-epi"><option value="">Todos</option>${S.epis.slice().sort(byName).map(p=>`<option value="${p.id}" ${R.epi===p.id?'selected':''}>${esc(p.nome)}</option>`).join('')}</select></div>
       <div style="margin-left:auto;display:flex;gap:8px;align-self:flex-end;flex-wrap:wrap"><button class="btn" data-action="csv">${I.down} Planilha (CSV)</button><button class="btn" data-action="dl-geral">${I.down} Relatório (HTML)</button><button class="btn btn-dark" data-action="print-geral">${I.print} Imprimir / PDF</button></div></div></div>
